@@ -1,0 +1,66 @@
+
+material strongknight.fbxcloth
+{
+	technique
+	{
+		pass 
+		{
+			specular 1 1 1 1 17.1484
+
+			texture_unit
+			{
+				texture clothColor.png
+				rtshader_system
+				{
+				}
+			}
+
+			texture_unit
+			{
+				texture clothNormal.png
+				rtshader_system
+				{
+					normal_map tangent_space
+				}
+			}
+			rtshader_system
+			{
+			}
+		}
+
+	}
+
+}
+
+material strongknight.fbxknight
+{
+	technique
+	{
+		pass 
+		{
+			specular 1 1 1 1 32
+
+			texture_unit
+			{
+				texture knight1Color.png
+				rtshader_system
+				{
+				}
+			}
+
+			texture_unit
+			{
+				texture knight1Normal.png
+				rtshader_system
+				{
+					normal_map tangent_space
+				}
+			}
+			rtshader_system
+			{
+			}
+		}
+
+	}
+
+}
