@@ -10,6 +10,9 @@
 #include "OgreMesh.h"
 #include "OgreSceneManager.h"
 #include <iostream>
+#include <OgreTrays.h>
+
+
 
 using namespace std;
 
@@ -28,7 +31,7 @@ class KeyHandler : public OgreBites::InputListener
         // Obtém o SceneManager associado à janela de renderização
         mSceneManager = scene;
         mCamera = scene->getCamera("Camera");
-
+        
     }
     
 
@@ -41,10 +44,10 @@ class KeyHandler : public OgreBites::InputListener
 
         Ogre::Vector3 direction = mCamera->getRealDirection();
         
-        direction.normalise();
+        //direction.normalise();
         //cout << direction << endl;
 
-        cout << evt.keysym.sym << endl;
+        //cout << evt.keysym.sym << endl;
         
         // Verifica qual tecla foi pressionada
         switch (evt.keysym.sym)
@@ -54,18 +57,20 @@ class KeyHandler : public OgreBites::InputListener
 
             mNode->translate(direction);
             break;
-        case 97:
+        /*case 97:
             // Move o objeto para a esquerda
             mNode->translate(-1.0f, 0.0f, 0.0f);
             break;
+        */
         case 115:
             // Move o objeto para baixo
             mNode->translate(direction*-1);
             break;
-        case 100:
+        /*case 100:
             // Move o objeto para a direita
             mNode->translate(1.0f, 0.0f, 0.0f);
             break;
+        */
         }
 
         if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
@@ -77,14 +82,9 @@ class KeyHandler : public OgreBites::InputListener
     }
 
     bool mouseMoved(const OgreBites::MouseMotionEvent &evt) 
-    {
-
-        Ogre::Vector2 move = Ogre::Vector2(evt.xrel, evt.yrel);
-
-        
-        mCamera->getParentNode()->rotate(mCamera->getRealUp(), Ogre::Radian(10));
-
-        cout << mCamera->getRealUp() << endl;
+    { 
+        mCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
+        mCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
         return true;
     }
 
@@ -167,11 +167,15 @@ int main(int argc, char* argv[])
     //! [main]
         // register for input events
     
-
+    
+    OgreBites::TrayManager controlador = OgreBites::TrayManager::TrayManager("Controlador", ctx.getRenderWindow());
     KeyHandler keyHandler(scnMgr);
     ctx.addInputListener(&keyHandler);
     
+    
+    
     ctx.getRoot()->startRendering();
+    
 
     
 

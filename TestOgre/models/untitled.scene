@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- exporter: blender2ogre 0.8.3 -->
-<!-- export_time: Thu, 12 Oct 2023 22:52:47 +0000 -->
-<!-- previous_export_time: Thu, 12 Oct 2023 22:49:37 +0000 -->
+<!-- export_time: Wed, 18 Oct 2023 01:13:08 +0000 -->
+<!-- previous_export_time: Fri, 13 Oct 2023 02:38:00 +0000 -->
 <scene author="gutam" formatVersion="1.1" >
   <nodes >
     <node name="Camera" >
       <position x="7.358891" y="4.958309" z="6.925791" />
-      <rotation qw="0.912" qx="-0.228" qy="0.338" qz="0" />
+      <rotation qw="0.928477" qx="0.000000" qy="0.371391" qz="-0.000000" />
       <scale x="1.000000" y="1.000000" z="1.000000" />
       <camera fov="0.356186" name="Camera" projectionType="perspective" >
         <clipping far="100.000000" near="0.100000" />
@@ -22,12 +22,12 @@
     </node>
     <node name="Light" >
       <position x="1.928243" y="6.677448" z="-14.495333" />
-      <rotation qw="0.570948" qx="0.169076" qy="0.755880" qz="-0.272171" />
+      <rotation qw="0.570947" qx="0.169076" qy="0.755880" qz="-0.272171" />
       <scale x="1.000000" y="1.000000" z="1.000000" />
-      <light name="Light" powerScale="1000.0" type="point" >
-        <colourDiffuse b="1.000000" g="1.000000" r="1.000000" />
+      <light name="Light" powerScale="500.0" type="point" >
+        <colourDiffuse b="0.500000" g="0.500000" r="0.500000" />
         <colourSpecular b="1.000000" g="1.000000" r="1.000000" />
-        <lightAttenuation constant="4.0" linear="1" quadratic="4.0" range="50" />
+        <lightAttenuation constant="1.0" linear="0.033333" quadratic="1" range="5000" />
       </light>
     </node>
     <node name="Plane" >
