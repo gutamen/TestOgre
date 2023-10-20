@@ -1,0 +1,3 @@
+g++ main.cpp -lOgreMain -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -I/usr/include/OGRE -I/usr/include/OGRE/RTShaderSystem -I/usr/include/OGRE/Overla
+
+g++ main.cpp -lOgreMain -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -I/usr/include/OGRE -I/usr/include/OGRE/RTShaderSystem -I/usr/include/OGRE/Overlay -I/usr/include/OGRE/Bites

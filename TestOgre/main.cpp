@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
         // register for input events
     
     
-    OgreBites::TrayManager controlador = OgreBites::TrayManager::TrayManager("Controlador", ctx.getRenderWindow());
+    OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
     KeyHandler keyHandler(scnMgr);
     ctx.addInputListener(&keyHandler);
     
