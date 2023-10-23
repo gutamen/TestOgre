@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\ogre\Components\Overlay\include;G:\ogre\Components\Bullet\include;G:\ogre\out\include;G:\ogre\Components\RTShaderSystem\include;G:\ogre\Components\Bites\include;G:\ogre\OgreMain\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\ogre\Components\Overlay\include;G:\ogre\Components\Bullet\include;G:\ogre\out\include;G:\ogre\Components\RTShaderSystem\include;G:\ogre\Components\Bites\include;G:\ogre\OgreMain\include;G:\ogre\out\Dependencies\include\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>

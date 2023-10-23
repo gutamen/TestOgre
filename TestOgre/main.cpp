@@ -11,7 +11,8 @@
 #include "OgreSceneManager.h"
 #include <iostream>
 #include <OgreTrays.h>
-
+#include <Windows.h>
+#include <OgreBullet.h>
 
 
 using namespace std;
@@ -85,6 +86,7 @@ class KeyHandler : public OgreBites::InputListener
     { 
         mCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
         mCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
+        
         return true;
     }
 
@@ -114,7 +116,7 @@ int main(int argc, char* argv[])
 
     Ogre::SceneNode* attachmentNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     attachmentNode->loadChildren("untitled.scene");
-
+    
     // without light we would just get a black screen    
     //Ogre::Light* light = scnMgr->createLight("MainLight");
     //Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -152,6 +154,8 @@ int main(int argc, char* argv[])
 
     //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
 
+    Ogre::Bullet::createCylinderCollider(camera);
+
     ctx.getRenderWindow()->addViewport(camera);
 
     // finally something to render
@@ -168,7 +172,15 @@ int main(int argc, char* argv[])
         // register for input events
     
     
+    Ogre::RenderWindow* tela = ctx.getRenderWindow();
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
+
+    
+    //cout << tela->getMetrics << endl;
+
+    //controlador->hideCursor();
+    
+
     KeyHandler keyHandler(scnMgr);
     ctx.addInputListener(&keyHandler);
     
