@@ -11,7 +11,7 @@
 #include "OgreSceneManager.h"
 #include <iostream>
 #include <OgreTrays.h>
-#include <Windows.h>
+#include <conio.h>
 #include <OgreBullet.h>
 
 
@@ -19,7 +19,15 @@ using namespace std;
 
 
 
+class frame : public Ogre::FrameListener
+{
+    public:
+        frame() {
 
+        }
+
+
+};
 
 
 //! [key_handler]
@@ -36,14 +44,50 @@ class KeyHandler : public OgreBites::InputListener
     }
     
 
+    void frameRendered(const Ogre::FrameEvent& evt) {
+        timer += evt.timeSinceLastFrame;
+        cout << timer << endl;
+        if (timer >= 0.05) {
+
+            if (front) {
+                mCamera->getParentNode()->translate(mCamera->getRealDirection());
+            }
+
+            if(rear) {
+                mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
+            }
+
+            timer = 0;
+        }
+
+    }
+
+    bool keyReleased(const OgreBites::KeyboardEvent& evt) {
+        switch (evt.keysym.sym)
+        {
+        case 119:
+            // Move o objeto para cima
+            front = false;
+            //mNode->translate(direction);
+            break;
+
+        case 115:
+            rear = false;
+            break;
+        }
+
+
+        return true;
+    }
+
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override
     {
 
-        Ogre::Node* mNode = mCamera->getParentNode();
+        //Ogre::Node* mNode = mCamera->getParentNode();
         
-        Ogre::Quaternion orientation = mNode->getOrientation();
+        //Ogre::Quaternion orientation = mNode->getOrientation();
 
-        Ogre::Vector3 direction = mCamera->getRealDirection();
+        //Ogre::Vector3 direction = mCamera->getRealDirection();
         
         //direction.normalise();
         //cout << direction << endl;
@@ -55,8 +99,8 @@ class KeyHandler : public OgreBites::InputListener
         {
         case 119:
             // Move o objeto para cima
-
-            mNode->translate(direction);
+            front = true;
+            //mNode->translate(direction);
             break;
         /*case 97:
             // Move o objeto para a esquerda
@@ -65,7 +109,8 @@ class KeyHandler : public OgreBites::InputListener
         */
         case 115:
             // Move o objeto para baixo
-            mNode->translate(direction*-1);
+            rear = true;
+            //mNode->translate(direction*-1);
             break;
         /*case 100:
             // Move o objeto para a direita
@@ -91,6 +136,9 @@ class KeyHandler : public OgreBites::InputListener
     }
 
     private: 
+        Ogre::Real timer = 0;
+        bool rear = false;
+        bool front = false;
         Ogre::SceneManager* mSceneManager;
         Ogre::Camera* mCamera;
 };
@@ -156,6 +204,9 @@ int main(int argc, char* argv[])
 
     Ogre::Bullet::createCylinderCollider(camera);
 
+    
+    
+
     ctx.getRenderWindow()->addViewport(camera);
 
     // finally something to render
@@ -176,7 +227,9 @@ int main(int argc, char* argv[])
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
 
     
-    //cout << tela->getMetrics << endl;
+    
+    
+    //tela->reposition(100, 100);
 
     //controlador->hideCursor();
     
