@@ -29,6 +29,42 @@ class frame : public Ogre::FrameListener
 
 };
 
+class collide : public Ogre::Bullet::CollisionListener
+{
+    public:
+        collide(Ogre::MovableObject* in) {
+
+            object = in;
+        }
+
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) {
+        cout << "tocou" << endl;
+    }
+
+    Ogre::MovableObject* object;
+};
+
+class Physics {
+public:
+    btDefaultCollisionConfiguration* collisionConfiguration;
+    btCollisionDispatcher* dispatcher;
+    btBroadphaseInterface* overlappingPairCache;
+    btSequentialImpulseConstraintSolver* solver;
+    btDiscreteDynamicsWorld* dynamicsWorld;
+    std::vector<btCollisionShape*> collisionShapes;
+    std::map<std::string, btRigidBody*> physicsAccessors;
+    
+public:
+    void initObjects() {
+        collisionConfiguration = new btDefaultCollisionConfiguration();
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        overlappingPairCache = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver();
+        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+    }
+
+};
+
 
 //! [key_handler]
 class KeyHandler : public OgreBites::InputListener
@@ -46,7 +82,10 @@ class KeyHandler : public OgreBites::InputListener
 
     void frameRendered(const Ogre::FrameEvent& evt) {
         timer += evt.timeSinceLastFrame;
-        cout << timer << endl;
+        //cout << timer << endl;
+        fisica.dynamicsWorld->performDiscreteCollisionDetection();
+        cout << fisica.dispatcher->getNumManifolds() << endl;
+        
         if (timer >= 0.05) {
 
             if (front) {
@@ -112,11 +151,11 @@ class KeyHandler : public OgreBites::InputListener
             rear = true;
             //mNode->translate(direction*-1);
             break;
-        /*case 100:
+        case 100:
             // Move o objeto para a direita
-            mNode->translate(1.0f, 0.0f, 0.0f);
+            mSceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0,1,0));
             break;
-        */
+        
         }
 
         if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
@@ -131,7 +170,6 @@ class KeyHandler : public OgreBites::InputListener
     { 
         mCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
         mCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
-        
         return true;
     }
 
@@ -141,6 +179,8 @@ class KeyHandler : public OgreBites::InputListener
         bool front = false;
         Ogre::SceneManager* mSceneManager;
         Ogre::Camera* mCamera;
+    public:
+        Physics fisica;
 };
 //! [key_handler]
 
@@ -202,7 +242,7 @@ int main(int argc, char* argv[])
 
     //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
 
-    Ogre::Bullet::createCylinderCollider(camera);
+    
 
     
     
@@ -210,18 +250,31 @@ int main(int argc, char* argv[])
     ctx.getRenderWindow()->addViewport(camera);
 
     // finally something to render
-    //Ogre::Entity* ent = scnMgr->createEntity("strongknight.mesh");
-    //Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
-    //node->attachObject(ent);
-    
-
+    Ogre::Entity* ent = scnMgr->createEntity("Suzanne.mesh");
+    Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode(camera->getDerivedPosition());
+    node->attachObject(ent);
+    camera->detachFromParent();
+    node->attachObject(camera);
     //! [setup]
     
    
 
     //! [main]
         // register for input events
+    Ogre::Bullet::createCylinderCollider(camera);
     
+    
+    Physics fisic = Physics();
+    fisic.initObjects();
+    
+   
+
+    Ogre::Bullet::CollisionWorld* colider = new Ogre::Bullet::CollisionWorld(fisic.dynamicsWorld);
+    
+    colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE);
+    colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+    
+    fisic.dynamicsWorld->getNumCollisionObjects();
     
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
@@ -235,6 +288,8 @@ int main(int argc, char* argv[])
     
 
     KeyHandler keyHandler(scnMgr);
+    keyHandler.fisica = fisic;
+
     ctx.addInputListener(&keyHandler);
     
     
