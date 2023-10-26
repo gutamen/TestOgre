@@ -11,7 +11,6 @@
 #include "OgreSceneManager.h"
 #include <iostream>
 #include <OgreTrays.h>
-#include <conio.h>
 #include <OgreBullet.h>
 
 
@@ -84,7 +83,7 @@ class KeyHandler : public OgreBites::InputListener
         timer += evt.timeSinceLastFrame;
         //cout << timer << endl;
         fisica.dynamicsWorld->performDiscreteCollisionDetection();
-        cout << fisica.dispatcher->getNumManifolds() << endl;
+        //cout << fisica.dispatcher->getNumManifolds() << endl;
         
         if (timer >= 0.05) {
 
@@ -253,15 +252,14 @@ int main(int argc, char* argv[])
     Ogre::Entity* ent = scnMgr->createEntity("Suzanne.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode(camera->getDerivedPosition());
     node->attachObject(ent);
-    camera->detachFromParent();
-    node->attachObject(camera);
+    //camera->detachFromParent();
+    //node->attachObject(camera);
     //! [setup]
     
    
 
     //! [main]
         // register for input events
-    Ogre::Bullet::createCylinderCollider(camera);
     
     
     Physics fisic = Physics();
@@ -270,11 +268,11 @@ int main(int argc, char* argv[])
    
 
     Ogre::Bullet::CollisionWorld* colider = new Ogre::Bullet::CollisionWorld(fisic.dynamicsWorld);
-    
+     
     colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE);
     colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
     
-    fisic.dynamicsWorld->getNumCollisionObjects();
+    cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
