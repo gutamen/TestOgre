@@ -82,11 +82,11 @@ class KeyHandler : public OgreBites::InputListener
     void frameRendered(const Ogre::FrameEvent& evt) {
         timer += evt.timeSinceLastFrame;
         //cout << timer << endl;
-        fisica.dynamicsWorld->performDiscreteCollisionDetection();
-        //cout << fisica.dispatcher->getNumManifolds() << endl;
+        
         
         if (timer >= 0.05) {
-
+            //fisica.dynamicsWorld->performDiscreteCollisionDetection();
+            //cout << fisica.dispatcher->getNumManifolds() << endl;
             if (front) {
                 mCamera->getParentNode()->translate(mCamera->getRealDirection());
             }
@@ -252,8 +252,8 @@ int main(int argc, char* argv[])
     Ogre::Entity* ent = scnMgr->createEntity("Suzanne.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode(camera->getDerivedPosition());
     node->attachObject(ent);
-    //camera->detachFromParent();
-    //node->attachObject(camera);
+    camera->detachFromParent();
+    node->attachObject(camera);
     //! [setup]
     
    
@@ -265,13 +265,21 @@ int main(int argc, char* argv[])
     Physics fisic = Physics();
     fisic.initObjects();
     
-   
-
+    
+    
+    
+    
     Ogre::Bullet::CollisionWorld* colider = new Ogre::Bullet::CollisionWorld(fisic.dynamicsWorld);
      
     colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE);
     colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+    btVector3 teste = fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+
     
+    cout << teste.getX() << " " << teste.getY() << " " << teste.getZ() << endl;
+
+    fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform();
+
     cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
