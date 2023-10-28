@@ -85,20 +85,35 @@ class KeyHandler : public OgreBites::InputListener
         
         
         if (timer >= 0.05) {
-            fisica.dynamicsWorld->performDiscreteCollisionDetection();
-            cout << fisica.dispatcher->getNumManifolds() << endl;
+            //fisica.dynamicsWorld->performDiscreteCollisionDetection();
+            //cout << fisica.dispatcher->getNumManifolds() << endl;
             if (front) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection());
-                Ogre::Vector3 posi = mCamera->getParentNode()->getPosition();
-                btVector3* newPos = new btVector3(posi.x, posi.y, posi.z);
-                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newPos);
+                Ogre::Vector3 direction = mCamera->getRealDirection(), nowPos = mCamera->getParentNode()->getPosition(), newPos = nowPos+direction;
+                btVector3 *newBPos = new btVector3(newPos.x, newPos.y, newPos.z), nowBPos = fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+                
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newBPos);
+                fisica.dynamicsWorld->getCollisionWorld()->performDiscreteCollisionDetection();
+                if (fisica.dispatcher->getNumManifolds() == 0) {
+                    mCamera->getParentNode()->translate(mCamera->getRealDirection());
+                    
+                }else{
+                    fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(nowBPos);
+                }     
             }
 
             if(rear) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
-                Ogre::Vector3 posi = mCamera->getParentNode()->getPosition();
-                btVector3* newPos = new btVector3(posi.x, posi.y, posi.z);
-                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newPos);
+                Ogre::Vector3 direction = mCamera->getRealDirection()*-1, nowPos = mCamera->getParentNode()->getPosition(), newPos = nowPos + direction;
+                btVector3 *newBPos = new btVector3(newPos.x, newPos.y, newPos.z), nowBPos = fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newBPos);
+                fisica.dynamicsWorld->getCollisionWorld()->performDiscreteCollisionDetection();
+                if (fisica.dispatcher->getNumManifolds() == 0) {
+                    mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
+
+                }
+                else {
+                    fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(nowBPos);
+                }
             }
 
             timer = 0;
@@ -290,9 +305,13 @@ int main(int argc, char* argv[])
     fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(body0);
 
     posi = scnMgr->getEntity("Suzanne")->getParentNode()->getPosition();
-     
+    
+    
+
     body0.setValue(posi.x, posi.y, posi.z);
     fisic.dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().setOrigin(body0);
+
+    
 
 
     //cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << endl;
