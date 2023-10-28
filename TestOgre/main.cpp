@@ -5,11 +5,11 @@
 
 #include "Ogre.h"
 #include "OgreApplicationContext.h"
+#include <OgrePrerequisites.h>
 #include <iostream>
 #include <fstream>
 #include "OgreMesh.h"
 #include "OgreSceneManager.h"
-#include <iostream>
 #include <OgreTrays.h>
 #include <OgreBullet.h>
 
@@ -85,14 +85,20 @@ class KeyHandler : public OgreBites::InputListener
         
         
         if (timer >= 0.05) {
-            //fisica.dynamicsWorld->performDiscreteCollisionDetection();
-            //cout << fisica.dispatcher->getNumManifolds() << endl;
+            fisica.dynamicsWorld->performDiscreteCollisionDetection();
+            cout << fisica.dispatcher->getNumManifolds() << endl;
             if (front) {
                 mCamera->getParentNode()->translate(mCamera->getRealDirection());
+                Ogre::Vector3 posi = mCamera->getParentNode()->getPosition();
+                btVector3* newPos = new btVector3(posi.x, posi.y, posi.z);
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newPos);
             }
 
             if(rear) {
                 mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
+                Ogre::Vector3 posi = mCamera->getParentNode()->getPosition();
+                btVector3* newPos = new btVector3(posi.x, posi.y, posi.z);
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newPos);
             }
 
             timer = 0;
@@ -273,14 +279,29 @@ int main(int argc, char* argv[])
      
     colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE);
     colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-    btVector3 teste = fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-
+    btVector3 body0 = fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+    btVector3 body1 = fisic.dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
-    cout << teste.getX() << " " << teste.getY() << " " << teste.getZ() << endl;
+    //cout << ent->getParentNode()->getPosition() << endl;
+    
+    Ogre::Vector3 posi = ent->getParentNode()->getPosition();
 
-    fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform();
+    body0.setValue(posi.x, posi.y, posi.z);
+    fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(body0);
 
-    cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
+    posi = scnMgr->getEntity("Suzanne")->getParentNode()->getPosition();
+     
+    body0.setValue(posi.x, posi.y, posi.z);
+    fisic.dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().setOrigin(body0);
+
+
+    //cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << endl;
+    //cout << body1.getX() << " " << body1.getY() << " " << body1.getZ() << endl;
+    
+
+    //fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform();
+
+    //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
