@@ -5,6 +5,7 @@
 
 #include "Ogre.h"
 #include "OgreApplicationContext.h"
+#include <OgreNode.h>
 #include <OgrePrerequisites.h>
 #include <iostream>
 #include <fstream>
@@ -16,7 +17,14 @@
 
 using namespace std;
 
-
+class playerCollision : public btCollisionWorld::ContactResultCallback
+{
+    btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1){
+        btVector3 ptA = cp.getPositionWorldOnA();
+        btVector3 ptB = cp.getPositionWorldOnB();
+        return 0;
+    }
+};
 
 class frame : public Ogre::FrameListener
 {
@@ -84,7 +92,7 @@ class KeyHandler : public OgreBites::InputListener
         //cout << timer << endl;
         
         
-        if (timer >= 0.05) {
+        if (timer >= 0.0166) {
             //fisica.dynamicsWorld->performDiscreteCollisionDetection();
             //cout << fisica.dispatcher->getNumManifolds() << endl;
             if (front) {
@@ -193,12 +201,15 @@ class KeyHandler : public OgreBites::InputListener
         return true;
     }
 
-    private: 
+    private:
+        Ogre::Node* playerNode;
+        Ogre::Real MoveSpeed;
         Ogre::Real timer = 0;
         bool rear = false;
         bool front = false;
         Ogre::SceneManager* mSceneManager;
         Ogre::Camera* mCamera;
+
     public:
         Physics fisica;
 };
