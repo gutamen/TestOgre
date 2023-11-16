@@ -5,6 +5,7 @@
 
 #include "Ogre.h"
 #include "OgreApplicationContext.h"
+#include <LinearMath/btVector3.h>
 #include <OgreNode.h>
 #include <OgrePrerequisites.h>
 #include <iostream>
@@ -13,7 +14,7 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-
+#include "Physics.hpp"
 
 using namespace std;
 
@@ -51,26 +52,6 @@ class collide : public Ogre::Bullet::CollisionListener
     Ogre::MovableObject* object;
 };
 
-class Physics {
-public:
-    btDefaultCollisionConfiguration* collisionConfiguration;
-    btCollisionDispatcher* dispatcher;
-    btBroadphaseInterface* overlappingPairCache;
-    btSequentialImpulseConstraintSolver* solver;
-    btDiscreteDynamicsWorld* dynamicsWorld;
-    std::vector<btCollisionShape*> collisionShapes;
-    std::map<std::string, btRigidBody*> physicsAccessors;
-    
-public:
-    void initObjects() {
-        collisionConfiguration = new btDefaultCollisionConfiguration();
-        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        overlappingPairCache = new btDbvtBroadphase();
-        solver = new btSequentialImpulseConstraintSolver();
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    }
-
-};
 
 
 //! [key_handler]
@@ -258,36 +239,19 @@ int main(int argc, char* argv[])
         // register for input events
     
     
-    Physics fisic = Physics();
-    fisic.initObjects();
+    Physics* fisic = new Physics();
     
     
-    
-    
-    
-    Ogre::Bullet::CollisionWorld* colider = new Ogre::Bullet::CollisionWorld(fisic.dynamicsWorld);
+    Ogre::Bullet::DynamicsWorld* colider = new Ogre::Bullet::DynamicsWorld(fisic->dynamicsWorld);
      
-    colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE);
-    colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-    btVector3 body0 = fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    btVector3 body1 = fisic.dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+    colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE)->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
+    colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE)->getWorldTransform().setOrigin(Ogre::Bullet::convert(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition()));
+    btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+    btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
-    //cout << ent->getParentNode()->getPosition() << endl;
+    cout << body0.x() << " " << body0.y() << " " << body0.z()  << endl << body1.x() << " " << body1.y() << " " << body1.z() << endl;
     
-    Ogre::Vector3 posi = ent->getParentNode()->getPosition();
-
-    body0.setValue(posi.x, posi.y, posi.z);
-    fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(body0);
-
-    posi = scnMgr->getEntity("Suzanne")->getParentNode()->getPosition();
-    
-    
-
-    body0.setValue(posi.x, posi.y, posi.z);
-    fisic.dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().setOrigin(body0);
-
-    
-
+    Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
 
     //cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << endl;
     //cout << body1.getX() << " " << body1.getY() << " " << body1.getZ() << endl;
