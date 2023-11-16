@@ -87,7 +87,7 @@ class KeyHandler : public OgreBites::InputListener
     }
     
 
-    void frameRendered(const Ogre::FrameEvent& evt) override{
+    void frameRendered(const Ogre::FrameEvent& evt) {
         timer += evt.timeSinceLastFrame;
         //cout << timer << endl;
         
@@ -96,11 +96,32 @@ class KeyHandler : public OgreBites::InputListener
             //fisica.dynamicsWorld->performDiscreteCollisionDetection();
             //cout << fisica.dispatcher->getNumManifolds() << endl;
             if (front) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection()); 
+                Ogre::Vector3 direction = mCamera->getRealDirection(), nowPos = mCamera->getParentNode()->getPosition(), newPos = nowPos+direction;
+                btVector3 *newBPos = new btVector3(newPos.x, newPos.y, newPos.z), nowBPos = fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+                
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newBPos);
+                fisica.dynamicsWorld->getCollisionWorld()->performDiscreteCollisionDetection();
+                if (fisica.dispatcher->getNumManifolds() == 0) {
+                    mCamera->getParentNode()->translate(mCamera->getRealDirection());
+                    
+                }else{
+                    fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(nowBPos);
+                }     
             }
 
             if(rear) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
+                Ogre::Vector3 direction = mCamera->getRealDirection()*-1, nowPos = mCamera->getParentNode()->getPosition(), newPos = nowPos + direction;
+                btVector3 *newBPos = new btVector3(newPos.x, newPos.y, newPos.z), nowBPos = fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+
+                fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(*newBPos);
+                fisica.dynamicsWorld->getCollisionWorld()->performDiscreteCollisionDetection();
+                if (fisica.dispatcher->getNumManifolds() == 0) {
+                    mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
+
+                }
+                else {
+                    fisica.dynamicsWorld->getCollisionWorld()->getCollisionObjectArray().at(0)->getWorldTransform().setOrigin(nowBPos);
+                }
             }
 
             timer = 0;
@@ -108,8 +129,9 @@ class KeyHandler : public OgreBites::InputListener
 
     }
 
-    bool keyReleased(const OgreBites::KeyboardEvent& evt) override{
-        switch (evt.keysym.sym){
+    bool keyReleased(const OgreBites::KeyboardEvent& evt) {
+        switch (evt.keysym.sym)
+        {
         case 119:
             // Move o objeto para cima
             front = false;
@@ -125,8 +147,23 @@ class KeyHandler : public OgreBites::InputListener
         return true;
     }
 
-    bool keyPressed(const OgreBites::KeyboardEvent& evt) override{
-        switch (evt.keysym.sym){
+    bool keyPressed(const OgreBites::KeyboardEvent& evt) override
+    {
+
+        //Ogre::Node* mNode = mCamera->getParentNode();
+        
+        //Ogre::Quaternion orientation = mNode->getOrientation();
+
+        //Ogre::Vector3 direction = mCamera->getRealDirection();
+        
+        //direction.normalise();
+        //cout << direction << endl;
+
+        //cout << evt.keysym.sym << endl;
+        
+        // Verifica qual tecla foi pressionada
+        switch (evt.keysym.sym)
+        {
         case 119:
             // Move o objeto para cima
             front = true;
@@ -157,7 +194,8 @@ class KeyHandler : public OgreBites::InputListener
         return true;
     }
 
-    bool mouseMoved(const OgreBites::MouseMotionEvent &evt) override{ 
+    bool mouseMoved(const OgreBites::MouseMotionEvent &evt) 
+    { 
         mCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
         mCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
         return true;
@@ -172,11 +210,9 @@ class KeyHandler : public OgreBites::InputListener
         Ogre::SceneManager* mSceneManager;
         Ogre::Camera* mCamera;
 
-    //public:
-        //Physics fisica;
+    public:
+        Physics fisica;
 };
-
-
 //! [key_handler]
 
 int main(int argc, char* argv[])
@@ -303,10 +339,13 @@ int main(int argc, char* argv[])
     
     
     
+    //tela->reposition(100, 100);
+
+    //controlador->hideCursor();
     
 
     KeyHandler keyHandler(scnMgr);
-    //keyHandler.fisica = fisic;
+    keyHandler.fisica = fisic;
 
     ctx.addInputListener(&keyHandler);
     
