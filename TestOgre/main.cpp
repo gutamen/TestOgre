@@ -14,7 +14,7 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-#include "Physics.hpp"
+#include "physics.hpp"
 
 using namespace std;
 
@@ -27,13 +27,20 @@ class playerCollision : public btCollisionWorld::ContactResultCallback
     }
 };
 
-class frame : public Ogre::FrameListener
+class updater : public Ogre::FrameListener
 {
     public:
-        frame() {
+    updater() {
 
-        }
+    }
+        
+    bool frameStarted(const FrameEvent&) override{
+        
+        cout << "um" << endl;
 
+
+        return true;
+    }
 
 };
 
@@ -51,7 +58,6 @@ class collide : public Ogre::Bullet::CollisionListener
 
     Ogre::MovableObject* object;
 };
-
 
 
 //! [key_handler]
@@ -239,25 +245,17 @@ int main(int argc, char* argv[])
         // register for input events
     
     
-    Physics* fisic = new Physics();
+    physics* fisic = new physics();
     
-    
-    Ogre::Bullet::DynamicsWorld* colider = new Ogre::Bullet::DynamicsWorld(fisic->dynamicsWorld);
-     
-    colider->addCollisionObject(ent, Ogre::Bullet::CT_SPHERE)->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
-    colider->addCollisionObject(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE)->getWorldTransform().setOrigin(Ogre::Bullet::convert(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition()));
+    fisic->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
+    fisic->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
+
     btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
     btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
     cout << body0.x() << " " << body0.y() << " " << body0.z()  << endl << body1.x() << " " << body1.y() << " " << body1.z() << endl;
     
     Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
-
-    //cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << endl;
-    //cout << body1.getX() << " " << body1.getY() << " " << body1.getZ() << endl;
-    
-
-    //fisic.dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform();
 
     //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
@@ -266,12 +264,11 @@ int main(int argc, char* argv[])
 
     
     
+    updater* frames = new updater(); 
     
-    
-
+    root->addFrameListener(frames);
     KeyHandler keyHandler(scnMgr);
     //keyHandler.fisica = fisic;
-
     ctx.addInputListener(&keyHandler);
     
     
