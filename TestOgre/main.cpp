@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 
 
 
-    Controllers* controller = new Controllers(scnMgr);
+    Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
