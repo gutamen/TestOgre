@@ -132,6 +132,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Updater.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Controllers.hpp" />
+    <ClInclude Include="KeyHandler.hpp" />
+    <ClInclude Include="Physics.hpp" />
+    <ClInclude Include="Player.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

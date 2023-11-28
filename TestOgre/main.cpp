@@ -14,7 +14,8 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-#include "physics.hpp"
+#include "Physics.hpp"
+#include "Controllers.hpp"
 
 using namespace std;
 
@@ -27,141 +28,11 @@ class playerCollision : public btCollisionWorld::ContactResultCallback
     }
 };
 
-class updater : public Ogre::FrameListener
-{
-    public:
-    updater() {
 
-    }
-        
-    bool frameStarted(const FrameEvent&) override{
-        
-        cout << "um" << endl;
-
-
-        return true;
-    }
-
-};
-
-class collide : public Ogre::Bullet::CollisionListener
-{
-    public:
-        collide(Ogre::MovableObject* in) {
-
-            object = in;
-        }
-
-    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) {
-        cout << "tocou" << endl;
-    }
-
-    Ogre::MovableObject* object;
-};
 
 
 //! [key_handler]
-class KeyHandler : public OgreBites::InputListener
-{
 
-    public:
-    KeyHandler(Ogre::SceneManager* scene)
-    {
-        // Obtém o SceneManager associado à janela de renderização
-        mSceneManager = scene;
-        mCamera = scene->getCamera("Camera");
-        
-    }
-    
-
-    void frameRendered(const Ogre::FrameEvent& evt) override{
-        timer += evt.timeSinceLastFrame;
-        //cout << timer << endl;
-        
-        
-        if (timer >= 0.0166) {
-            //fisica.dynamicsWorld->performDiscreteCollisionDetection();
-            //cout << fisica.dispatcher->getNumManifolds() << endl;
-            if (front) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection()); 
-            }
-
-            if(rear) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection()*-1);
-            }
-
-            timer = 0;
-        }
-
-    }
-
-    bool keyReleased(const OgreBites::KeyboardEvent& evt) override{
-        switch (evt.keysym.sym){
-        case 119:
-            // Move o objeto para cima
-            front = false;
-            //mNode->translate(direction);
-            break;
-
-        case 115:
-            rear = false;
-            break;
-        }
-
-
-        return true;
-    }
-
-    bool keyPressed(const OgreBites::KeyboardEvent& evt) override{
-        switch (evt.keysym.sym){
-        case 119:
-            // Move o objeto para cima
-            front = true;
-            //mNode->translate(direction);
-            break;
-        /*case 97:
-            // Move o objeto para a esquerda
-            mNode->translate(-1.0f, 0.0f, 0.0f);
-            break;
-        */
-        case 115:
-            // Move o objeto para baixo
-            rear = true;
-            //mNode->translate(direction*-1);
-            break;
-        case 100:
-            // Move o objeto para a direita
-            mSceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0,1,0));
-            break;
-        
-        }
-
-        if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
-        {
-            
-            Ogre::Root::getSingleton().queueEndRendering();
-        }
-        return true;
-    }
-
-    bool mouseMoved(const OgreBites::MouseMotionEvent &evt) override{ 
-        mCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
-        mCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
-        return true;
-    }
-
-    private:
-        Ogre::Node* playerNode;
-        Ogre::Real MoveSpeed;
-        Ogre::Real timer = 0;
-        bool rear = false;
-        bool front = false;
-        Ogre::SceneManager* mSceneManager;
-        Ogre::Camera* mCamera;
-
-    //public:
-        //Physics fisica;
-};
 
 
 //! [key_handler]
@@ -245,7 +116,7 @@ int main(int argc, char* argv[])
         // register for input events
     
     
-    physics* fisic = new physics();
+    Physics* fisic = new Physics();
     
     fisic->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     fisic->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
@@ -262,14 +133,12 @@ int main(int argc, char* argv[])
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
 
+
+
+    Controllers* controller = new Controllers(scnMgr);
     
-    
-    updater* frames = new updater(); 
-    
-    root->addFrameListener(frames);
-    KeyHandler keyHandler(scnMgr);
-    //keyHandler.fisica = fisic;
-    ctx.addInputListener(&keyHandler);
+    root->addFrameListener(controller->getFrameController());
+    ctx.addInputListener(controller->getInputController());
     
     
     

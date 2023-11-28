@@ -5,7 +5,7 @@
 using namespace Ogre::Bullet;
 using namespace Ogre;
 
-class physics {
+class Physics {
 public:
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;
@@ -19,7 +19,7 @@ public:
 
     
 public:
-    physics(){
+    Physics(){
         collisionConfiguration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
         overlappingPairCache = new btDbvtBroadphase();
