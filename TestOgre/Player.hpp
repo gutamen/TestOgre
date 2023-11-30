@@ -1,3 +1,4 @@
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <Ogre.h>
 
 using namespace Ogre;
@@ -22,9 +23,19 @@ public:
 		return this->playerEntity;
 	}
 
+    void setPlayerFisicBody(btRigidBody* fisicBody){
+        this->playerFisicBody = fisicBody;
+    }
+
+    btRigidBody* getPlayerFisicBody(){
+        return this->playerFisicBody;
+    }
+
 private:
 	Camera* playerCamera;
 	SceneNode* playerNode;
 	Entity* playerEntity;
+    btRigidBody* playerFisicBody; 
+
 
 };

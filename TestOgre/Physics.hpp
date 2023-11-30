@@ -6,6 +6,7 @@ using namespace Ogre::Bullet;
 using namespace Ogre;
 
 class Physics {
+
 public:
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;

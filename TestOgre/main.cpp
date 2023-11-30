@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     
     
     Physics* fisic = new Physics();
-    
+    //btVector3 body0 = fisic->ogreAdapter->addRigidBody(0, ent, Ogre::Bullet::CT_SPHERE)->getWorldTransform().getOrigin(); 
     fisic->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     fisic->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
 

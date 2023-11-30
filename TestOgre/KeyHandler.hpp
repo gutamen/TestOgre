@@ -1,6 +1,7 @@
 #include <Ogre.h>
 #include <OgreApplicationContext.h>
-
+#include <OgreSceneManager.h>
+#include "Player.hpp"
 using namespace std;
 using namespace OgreBites;
 using namespace Ogre;
@@ -9,29 +10,33 @@ class KeyHandler : public InputListener
 {
 
 public:
-    KeyHandler(SceneManager* scene)
+    KeyHandler(SceneManager* sceneManager)
     {
         // Obtém o SceneManager associado à janela de renderização
-        mSceneManager = scene;
-        mCamera = scene->getCamera("Camera");
+        this->sceneManager = sceneManager;
+        this->playerCamera = sceneManager->getCamera("Camera");
 
+    }
+
+    KeyHandler(SceneManager* sceneManager, Player* player){
+        this->sceneManager = sceneManager;
+        this->player = player;
+        this->playerCamera = player->getPlayerCamera();
     }
 
 
     void frameRendered(const FrameEvent& evt) override {
         timer += evt.timeSinceLastFrame;
-        //cout << timer << endl;
-
 
         if (timer >= 0.0166) {
             //fisica.dynamicsWorld->performDiscreteCollisionDetection();
             //cout << fisica.dispatcher->getNumManifolds() << endl;
-            if (front) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection());
+            if (wIsPressed) {
+                playerCamera->getParentNode()->translate(playerCamera->getRealDirection());
             }
 
-            if (rear) {
-                mCamera->getParentNode()->translate(mCamera->getRealDirection() * -1);
+            if (sIsPressed) {
+                playerCamera->getParentNode()->translate(playerCamera->getRealDirection() * -1);
             }
 
             timer = 0;
@@ -43,12 +48,12 @@ public:
         switch (evt.keysym.sym) {
         case 119:
             // Move o objeto para cima
-            front = false;
+            wIsPressed  = false;
             //mNode->translate(direction);
             break;
 
         case 115:
-            rear = false;
+            sIsPressed  = false;
             break;
         }
 
@@ -60,7 +65,7 @@ public:
         switch (evt.keysym.sym) {
         case 119:
             // Move o objeto para cima
-            front = true;
+            wIsPressed  = true;
             //mNode->translate(direction);
             break;
             /*case 97:
@@ -70,12 +75,12 @@ public:
             */
         case 115:
             // Move o objeto para baixo
-            rear = true;
+            sIsPressed  = true;
             //mNode->translate(direction*-1);
             break;
         case 100:
             // Move o objeto para a direita
-            mSceneManager->getEntity("Suzanne")->getParentNode()->translate(Vector3(0, 1, 0));
+            sceneManager->getEntity("Suzanne")->getParentNode()->translate(Vector3(0, 1, 0));
             break;
 
         }
@@ -89,19 +94,28 @@ public:
     }
 
     bool mouseMoved(const MouseMotionEvent& evt) override {
-        mCamera->getParentNode()->yaw(Radian(-evt.xrel * 0.005), Node::TS_WORLD);
-        mCamera->getParentNode()->pitch(Radian(-evt.yrel * 0.005));
+        playerCamera->getParentNode()->yaw(Radian(-evt.xrel * 0.005), Node::TS_WORLD);
+        playerCamera->getParentNode()->pitch(Radian(-evt.yrel * 0.005));
         return true;
+    }
+
+    bool pressedW(){
+        return this->wIsPressed;
+    }
+
+    bool pressedS(){
+        return this->sIsPressed;
     }
 
 private:
     Node* playerNode;
     Real MoveSpeed;
     Real timer = 0;
-    bool rear = false;
-    bool front = false;
-    SceneManager* mSceneManager;
-    Camera* mCamera;
+    Player* player;
+    bool sIsPressed =  false;
+    bool wIsPressed = false;
+    SceneManager* sceneManager;
+    Camera* playerCamera;
     
     //public:
         //Physics fisica;
