@@ -14,17 +14,19 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-#include "Physics.hpp"
 #include "Controllers.hpp"
 
 using namespace std;
 
-class playerCollision : public btCollisionWorld::ContactResultCallback
+class playerCollision : public Ogre::Bullet::CollisionListener
 {
-    btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1){
-        btVector3 ptA = cp.getPositionWorldOnA();
-        btVector3 ptB = cp.getPositionWorldOnB();
-        return 0;
+public:
+    playerCollision(){
+
+    }
+
+    void contact(const MovableObject *other, const btManifoldPoint &manifoldPoint) override{
+        cout << "teste" << endl;
     }
 };
 
@@ -115,18 +117,21 @@ int main(int argc, char* argv[])
     //! [main]
         // register for input events
     
+    playerCollision* teste = new playerCollision(); 
+    Controllers* controller = new Controllers(scnMgr, camera, node, ent);
+    Physics* fisic = controller->getPhysicsController();
+    controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
     
-    Physics* fisic = new Physics();
-    //btVector3 body0 = fisic->ogreAdapter->addRigidBody(0, ent, Ogre::Bullet::CT_SPHERE)->getWorldTransform().getOrigin(); 
-    fisic->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    fisic->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
+    //controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
+    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
 
+    
     btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
     btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
     cout << body0.x() << " " << body0.y() << " " << body0.z()  << endl << body1.x() << " " << body1.y() << " " << body1.z() << endl;
     
-    Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
+    //Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
 
     //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
@@ -135,7 +140,6 @@ int main(int argc, char* argv[])
 
 
 
-    Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
