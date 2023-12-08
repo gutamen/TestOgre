@@ -5,6 +5,7 @@
 
 #include "Ogre.h"
 #include "OgreApplicationContext.h"
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <LinearMath/btVector3.h>
 #include <OgreNode.h>
 #include <OgrePrerequisites.h>
@@ -120,16 +121,19 @@ int main(int argc, char* argv[])
     playerCollision* teste = new playerCollision(); 
     Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     Physics* fisic = controller->getPhysicsController();
-    controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
+    btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
     
+    controller->setPlayerFisicBody(playerBody);
+
     //controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
-
+    
     
     btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
     btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
-    cout << body0.x() << " " << body0.y() << " " << body0.z()  << endl << body1.x() << " " << body1.y() << " " << body1.z() << endl;
+    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
+    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
     
     //Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
 
@@ -140,7 +144,6 @@ int main(int argc, char* argv[])
 
 
 
-    
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
     

@@ -25,24 +25,24 @@ public:
     }
 
 
-    void frameRendered(const FrameEvent& evt) override {
+    /*void frameRendered(const FrameEvent& evt) override {
         timer += evt.timeSinceLastFrame;
 
         if (timer >= 0.0166) {
             //fisica.dynamicsWorld->performDiscreteCollisionDetection();
             //cout << fisica.dispatcher->getNumManifolds() << endl;
             if (wIsPressed) {
-                playerCamera->getParentNode()->translate(playerCamera->getRealDirection());
+                //playerCamera->getParentNode()->translate(playerCamera->getRealDirection());
             }
 
             if (sIsPressed) {
-                playerCamera->getParentNode()->translate(playerCamera->getRealDirection() * -1);
+                //playerCamera->getParentNode()->translate(playerCamera->getRealDirection() * -1);
             }
 
             timer = 0;
         }
 
-    }
+    }*/
 
     bool keyReleased(const KeyboardEvent& evt) override {
         switch (evt.keysym.sym) {

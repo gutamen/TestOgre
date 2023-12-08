@@ -21,7 +21,6 @@ public:
     std::map<std::string, btRigidBody*> physicsAccessors;
     DynamicsWorld* ogreAdapter;
 
-
     
 public:
     Physics(){
@@ -31,6 +30,7 @@ public:
         solver = new btSequentialImpulseConstraintSolver();
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
         ogreAdapter = new DynamicsWorld(dynamicsWorld);
+
     }
 
 public:

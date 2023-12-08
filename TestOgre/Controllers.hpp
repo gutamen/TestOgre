@@ -15,10 +15,10 @@ public:
 	}
 
 	Controllers(SceneManager* scene, Camera* playerCamera, SceneNode* playerNode, Entity* playerEntity) {
-		this->frameController = new Updater();
+        this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
         this->physicController = new Physics(); 
 		this->inputController = new KeyHandler(scene);
-		this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
+        this->frameController = new Updater(inputController, playerInstance, physicController);
 	}
 
 	KeyHandler* getInputController() {
