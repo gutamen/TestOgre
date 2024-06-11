@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
     //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
     
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
-    OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
+    //OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
 
 
 

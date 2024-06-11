@@ -1,6 +1,7 @@
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <Ogre.h>
 #include "Updater.hpp"
+#pragma once
 
 using namespace std;
 
@@ -20,6 +21,15 @@ public:
 		this->inputController = new KeyHandler(scene);
         this->frameController = new Updater(inputController, playerInstance, physicController);
 	}
+
+    // Construtor Principal
+	Controllers(SceneManager* scene, Camera* playerCamera, SceneNode* playerNode, Entity* playerEntity, bool autoFill){
+        this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
+        this->physicController = new Physics(); 
+		this->inputController = new KeyHandler(scene);
+        this->frameController = new Updater(inputController, playerInstance, physicController);
+	}
+
 
 	KeyHandler* getInputController() {
 		return this->inputController;
