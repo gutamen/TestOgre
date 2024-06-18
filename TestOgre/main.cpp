@@ -15,7 +15,7 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-#include "Controllers.hpp"
+#include "myEngine.hpp"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ public:
 
     }
 
-    void contact(const MovableObject *other, const btManifoldPoint &manifoldPoint) override{
+    void contact(const Ogre::MovableObject *other, const btManifoldPoint &manifoldPoint) override{
         cout << "teste" << endl;
     }
 };
@@ -123,18 +123,20 @@ int main(int argc, char* argv[])
     Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
     
-    controller->setPlayerFisicBody(playerBody);
+    //controller->setPlayerFisicBody(playerBody);
 
     //controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
+    //controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
     
     
-    btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+    //btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+    //btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
-    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
-    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
-    
+    //cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
+    //cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
+    //cout << fisic->dynamicsWorld->getCollisionObjectArray() << endl;
+
+
     //Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
 
     //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
