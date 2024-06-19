@@ -151,15 +151,16 @@ private:
 
 class Physics {
 
-public:
-    btDefaultCollisionConfiguration* collisionConfiguration;
-    btCollisionDispatcher* dispatcher;
-    btBroadphaseInterface* overlappingPairCache;
-    btSequentialImpulseConstraintSolver* solver;
-    btDiscreteDynamicsWorld* dynamicsWorld;
-    std::vector<btCollisionShape*> collisionShapes;
-    std::map<std::string, btRigidBody*> physicsAccessors;
+private:
+    //btDefaultCollisionConfiguration* collisionConfiguration;
+    //btCollisionDispatcher* dispatcher;
+    //btBroadphaseInterface* overlappingPairCache;
+    //btSequentialImpulseConstraintSolver* solver;
+    //btDiscreteDynamicsWorld* dynamicsWorld;
+    //std::vector<btCollisionShape*> collisionShapes;
+    //std::map<std::string, btRigidBody*> physicsAccessors;
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
+    btCollisionWorld* dynamicsWorld;
 
     
 public:
@@ -172,7 +173,7 @@ public:
         ogreAdapter = new Ogre::Bullet::DynamicsWorld(dynamicsWorld);
 */        
         ogreAdapter = new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0, 9.8, 0));
-        btDynamicsWorld* dynamicsWorld = ogreAdapter->getBtWorld();
+        dynamicsWorld = ogreAdapter->getBtWorld();
     }
 
 public:
@@ -184,6 +185,10 @@ public:
 
     btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1){
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
+    }
+
+    btCollisionWorld* getWorld() {
+        return this->dynamicsWorld;
     }
 
 

@@ -122,19 +122,19 @@ int main(int argc, char* argv[])
     Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
-    
-    //controller->setPlayerFisicBody(playerBody);
+    //cout << fisic->getWorld() << endl;
+    controller->setPlayerFisicBody(playerBody);
 
-    //controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    //controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
+    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
+    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
     
     
-    //btVector3 body0 = fisic->dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    //btVector3 body1 = fisic->dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+    btVector3 body1 = fisic->getWorld()->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
     
-    //cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
-    //cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
-    //cout << fisic->dynamicsWorld->getCollisionObjectArray() << endl;
+    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
+    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
+    cout << fisic->getWorld()->getCollisionObjectArray().size() << endl;
 
 
     //Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
