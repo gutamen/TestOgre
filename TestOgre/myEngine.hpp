@@ -92,25 +92,21 @@ public:
 
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override {
         switch (evt.keysym.sym) {
-        case 119:
-            // Move o objeto para cima
-            wIsPressed  = true;
-            //mNode->translate(direction);
-            break;
-            /*case 97:
-                // Move o objeto para a esquerda
-                mNode->translate(-1.0f, 0.0f, 0.0f);
+            case 100:
+                sceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0, 1, 0));
                 break;
-            */
-        case 115:
-            // Move o objeto para baixo
-            sIsPressed  = true;
-            //mNode->translate(direction*-1);
-            break;
-        case 100:
-            // Move o objeto para a direita
-            sceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0, 1, 0));
-            break;
+
+            case 103:
+                gIsPressed = true;
+                break;
+
+            case 119:
+                wIsPressed = true;
+                break;
+
+            case 115:
+                sIsPressed = true;
+                break;
 
         }
 
@@ -136,6 +132,10 @@ public:
         return this->sIsPressed;
     }
 
+    bool pressedG(){
+        return this->gIsPressed;
+    }
+
 private:
     Ogre::Node* playerNode;
     Ogre::Real MoveSpeed;
@@ -143,6 +143,7 @@ private:
     Player* player;
     bool sIsPressed =  false;
     bool wIsPressed = false;
+    bool gIsPressed = false;
     Ogre::SceneManager* sceneManager;
     Ogre::Camera* playerCamera;
     
@@ -190,6 +191,10 @@ public:
     btCollisionWorld* getWorld() {
         return this->dynamicsWorld;
     }
+    
+    btCollisionObjectArray getCollisionObjects(){
+        return dynamicsWorld->getCollisionObjectArray();
+    }
 
 
 };
@@ -228,7 +233,11 @@ public:
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection()*-1);
                 //playerBody->getWorldTransform().setOrigin(convert(player->getPlayerNode()->getPosition()));
             }
-
+            
+            if(keyHandler->pressedG()){
+                btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
+                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+            }
 
             tick = 0;
         }
