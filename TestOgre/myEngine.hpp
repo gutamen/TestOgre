@@ -75,17 +75,18 @@ public:
 
     bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
         switch (evt.keysym.sym) {
-        case 119:
-            // Move o objeto para cima
-            wIsPressed  = false;
-            //mNode->translate(direction);
-            break;
+            case 103:
+                gIsPressed = false;
+                break;       
 
-        case 115:
-            sIsPressed  = false;
-            break;
+            case 115:
+                sIsPressed = false;
+                break;
+
+            case 119:
+                wIsPressed = false;
+                break;
         }
-
 
         return true;
     }
@@ -141,7 +142,7 @@ private:
     Ogre::Real MoveSpeed;
     Ogre::Real timer = 0;
     Player* player;
-    bool sIsPressed =  false;
+    bool sIsPressed = false;
     bool wIsPressed = false;
     bool gIsPressed = false;
     Ogre::SceneManager* sceneManager;
@@ -224,6 +225,7 @@ public:
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
                 btVector3 teste = Ogre::Bullet::convert(player->getPlayerNode()->getPosition());
                 playerBody->getWorldTransform();
+                std::cout << 'W' << std::endl;
                 //origin = teste;
                 //origin = playerBody->getWorldTransform().getOrigin();
                 //cout << origin.getX() << " " << origin.getY() << " " << origin.getZ() << endl;
