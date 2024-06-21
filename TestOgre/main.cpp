@@ -19,13 +19,8 @@
 
 using namespace std;
 
-class playerCollision : public Ogre::Bullet::CollisionListener
+struct playerCollision : public Ogre::Bullet::CollisionListener
 {
-public:
-    playerCollision(){
-
-    }
-
     void contact(const Ogre::MovableObject *other, const btManifoldPoint &manifoldPoint) override{
         cout << "teste" << endl;
     }
@@ -121,7 +116,7 @@ int main(int argc, char* argv[])
     playerCollision* teste = new playerCollision(); 
     Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     Physics* fisic = controller->getPhysicsController();
-    btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
+    btRigidBody* playerBody = controller->addCollisionBodyInNode(1, ent, Ogre::Bullet::CT_SPHERE, teste);
     //cout << fisic->getWorld() << endl;
     controller->setPlayerFisicBody(playerBody);
 

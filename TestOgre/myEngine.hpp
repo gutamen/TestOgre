@@ -162,7 +162,7 @@ private:
     //std::vector<btCollisionShape*> collisionShapes;
     //std::map<std::string, btRigidBody*> physicsAccessors;
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
-    btCollisionWorld* dynamicsWorld;
+    btDynamicsWorld* dynamicsWorld;
 
     
 public:
@@ -189,7 +189,7 @@ public:
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
     }
 
-    btCollisionWorld* getWorld() {
+    btDynamicsWorld* getWorld() {
         return this->dynamicsWorld;
     }
     
@@ -223,21 +223,21 @@ public:
 
             if(keyHandler->pressedW()){
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
-                btVector3 teste = Ogre::Bullet::convert(player->getPlayerNode()->getPosition());
-                playerBody->getWorldTransform();
-                std::cout << 'W' << std::endl;
-                //origin = teste;
-                //origin = playerBody->getWorldTransform().getOrigin();
-                //cout << origin.getX() << " " << origin.getY() << " " << origin.getZ() << endl;
+                player->getPlayerFisicBody()->getWorldTransform().setOrigin(Ogre::Bullet::convert(player->getPlayerNode()->getPosition()));
+                
+                std::cout << player->getPlayerNode()->getPosition().x << std::endl << player->getPlayerNode()->getPosition().y << std::endl << player->getPlayerNode()->getPosition().z << std::endl;
+                
             } 
 
             if(keyHandler->pressedS()){
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection()*-1);
-                //playerBody->getWorldTransform().setOrigin(convert(player->getPlayerNode()->getPosition()));
+                player->getPlayerFisicBody()->getWorldTransform().setOrigin(Ogre::Bullet::convert(player->getPlayerNode()->getPosition()));
+                
             }
             
             if(keyHandler->pressedG()){
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
+                physics->getWorld()->stepSimulation(1);
                 std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
             }
 
