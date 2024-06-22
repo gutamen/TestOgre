@@ -231,7 +231,7 @@ public:
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
                 player->translate(player->getPlayerCamera()->getRealDirection());
 
-                std::cout << 'W' << std::endl;
+//                std::cout << 'W' << std::endl;
             }
 
             if (keyHandler->pressedS()) {
@@ -239,8 +239,13 @@ public:
             }
 
             if (keyHandler->pressedG()) {
+//                std::cout << physics->getCollisionObjects().size() << std::endl;
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
-                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl;
+//                std::cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << std::endl;
+
+                std::cout << physics->getCollisionObjects().at(0) << std::endl;
+//                std::cout << player->getPlayerFisicBody() << std::endl;
+
             }
 
             tick = 0;

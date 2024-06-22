@@ -123,18 +123,19 @@ int main(int argc, char* argv[])
     Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
     controller->setPlayerFisicBody(playerBody);
-    //    cout << playerBody << endl << fisic->getCollisionObjects().at(0) << endl;
-    //    cout << controller->getPlayerBody() << endl;
+
+    cout << playerBody << endl << fisic->getCollisionObjects().at(0) << endl;
+    cout << controller->getPlayerBody() << endl;
 
     controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
 
 
-    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
+//    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+//    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
 
-    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
-    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
+//    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
+//    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
 
 
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
