@@ -19,9 +19,14 @@
 
 using namespace std;
 
-struct playerCollision : public Ogre::Bullet::CollisionListener
+class playerCollision : public Ogre::Bullet::CollisionListener
 {
-    void contact(const Ogre::MovableObject *other, const btManifoldPoint &manifoldPoint) override{
+public:
+    playerCollision() {
+
+    }
+
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
         cout << "teste" << endl;
     }
 };
@@ -55,7 +60,7 @@ int main(int argc, char* argv[])
 
     Ogre::SceneNode* attachmentNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     attachmentNode->loadChildren("untitled.scene");
-    
+
     // without light we would just get a black screen    
     //Ogre::Light* light = scnMgr->createLight("MainLight");
     //Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -65,13 +70,13 @@ int main(int argc, char* argv[])
     Ogre::SceneManager::CameraList cameras = scnMgr->getCameras();
     Ogre::Camera* camera = cameras.at("Camera");
     camera->setAutoAspectRatio(true);
-    
+
     //cout << camera->getName();
 
     //scnMgr->getEntity("Suzanne")->getParentNode()->setPosition(1, 1, 1);
 
-    
-    
+
+
     //ctx.getRenderWindow()->addViewport(camera);
 
     // also need to tell where we are
@@ -93,10 +98,10 @@ int main(int argc, char* argv[])
 
     //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
 
-    
 
-    
-    
+
+
+
 
     ctx.getRenderWindow()->addViewport(camera);
 
@@ -107,52 +112,46 @@ int main(int argc, char* argv[])
     camera->detachFromParent();
     node->attachObject(camera);
     //! [setup]
-    
-   
+
+
 
     //! [main]
         // register for input events
-    
-    playerCollision* teste = new playerCollision(); 
+
+    playerCollision* teste = new playerCollision();
     Controllers* controller = new Controllers(scnMgr, camera, node, ent);
     Physics* fisic = controller->getPhysicsController();
-    btRigidBody* playerBody = controller->addCollisionBodyInNode(1, ent, Ogre::Bullet::CT_SPHERE, teste);
-    //cout << fisic->getWorld() << endl;
+    btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
     controller->setPlayerFisicBody(playerBody);
+    //    cout << playerBody << endl << fisic->getCollisionObjects().at(0) << endl;
+    //    cout << controller->getPlayerBody() << endl;
 
     controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);    
-    
-    
+    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+
+
     btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    btVector3 body1 = fisic->getWorld()->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-    
-    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl; 
+    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
+
+    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
     cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
-    cout << fisic->getWorld()->getCollisionObjectArray().size() << endl;
 
 
-    //Ogre::Bullet::DebugDrawer* debug = new Ogre::Bullet::DebugDrawer(node, fisic->dynamicsWorld); 
-
-    //cout << fisic.dynamicsWorld->getNumCollisionObjects() << endl;
-    
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     //OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
 
 
-
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
-    
-    
-    
-    ctx.getRoot()->startRendering();
-    
 
-    
+
+
+    ctx.getRoot()->startRendering();
+
 
     ctx.closeApp();
     //! [main]
+
     return 0;
 
 }

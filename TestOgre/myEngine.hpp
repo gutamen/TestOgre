@@ -14,46 +14,46 @@
 #include <LinearMath/btVector3.h>
 #include <OgreFrameListener.h>
 
-class Player{
+class Player {
 public:
-	Player(Ogre::Camera* camera, Ogre::SceneNode* node, Ogre::Entity* entity) {
-		this->playerCamera = camera;
-		this->playerNode = node;
-		this->playerEntity = entity;
-	};
-	
-	Ogre::Camera* getPlayerCamera() {
-		return this->playerCamera;
-	}
+    Player(Ogre::Camera* camera, Ogre::SceneNode* node, Ogre::Entity* entity) {
+        this->playerCamera = camera;
+        this->playerNode = node;
+        this->playerEntity = entity;
+    };
 
-	Ogre::SceneNode* getPlayerNode() {
-		return this->playerNode;
-	}
+    Ogre::Camera* getPlayerCamera() {
+        return this->playerCamera;
+    }
 
-	Ogre::Entity* getPlayerEntity() {
-		return this->playerEntity;
-	}
+    Ogre::SceneNode* getPlayerNode() {
+        return this->playerNode;
+    }
 
-    void setPlayerFisicBody(btRigidBody* fisicBody){
+    Ogre::Entity* getPlayerEntity() {
+        return this->playerEntity;
+    }
+
+    void setPlayerFisicBody(btRigidBody* fisicBody) {
         this->playerFisicBody = fisicBody;
     }
 
-    btRigidBody* getPlayerFisicBody(){
+    btRigidBody* getPlayerFisicBody() {
         return this->playerFisicBody;
     }
 
-    bool translate(Ogre::Vector3 movement){
+    bool translate(Ogre::Vector3 movement) {
         this->playerNode->translate(movement);
-        this->playerFisicBody->translate(Ogre::Bullet::convert(movement)); 
+        this->playerFisicBody->translate(Ogre::Bullet::convert(movement));
 
         return true;
     }
 
 private:
-	Ogre::Camera* playerCamera;
-	Ogre::SceneNode* playerNode;
-	Ogre::Entity* playerEntity;
-    btRigidBody* playerFisicBody = nullptr; 
+    Ogre::Camera* playerCamera;
+    Ogre::SceneNode* playerNode;
+    Ogre::Entity* playerEntity;
+    btRigidBody* playerFisicBody = nullptr;
 
 };
 
@@ -61,7 +61,7 @@ private:
 
 
 
-class KeyHandler : public OgreBites::InputListener{
+class KeyHandler : public OgreBites::InputListener {
 
 public:
     KeyHandler(Ogre::SceneManager* sceneManager)
@@ -72,7 +72,7 @@ public:
 
     }
 
-    KeyHandler(Ogre::SceneManager* sceneManager, Player* player){
+    KeyHandler(Ogre::SceneManager* sceneManager, Player* player) {
         this->sceneManager = sceneManager;
         this->player = player;
         this->playerCamera = player->getPlayerCamera();
@@ -81,17 +81,17 @@ public:
 
     bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
         switch (evt.keysym.sym) {
-            case 103:
-                gIsPressed = false;
-                break;       
+        case 103:
+            gIsPressed = false;
+            break;
 
-            case 115:
-                sIsPressed = false;
-                break;
+        case 115:
+            sIsPressed = false;
+            break;
 
-            case 119:
-                wIsPressed = false;
-                break;
+        case 119:
+            wIsPressed = false;
+            break;
         }
 
         return true;
@@ -99,21 +99,21 @@ public:
 
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override {
         switch (evt.keysym.sym) {
-            case 100:
-                sceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0, 1, 0));
-                break;
+        case 100:
+            sceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0, 1, 0));
+            break;
 
-            case 103:
-                gIsPressed = true;
-                break;
+        case 103:
+            gIsPressed = true;
+            break;
 
-            case 119:
-                wIsPressed = true;
-                break;
+        case 119:
+            wIsPressed = true;
+            break;
 
-            case 115:
-                sIsPressed = true;
-                break;
+        case 115:
+            sIsPressed = true;
+            break;
 
         }
 
@@ -131,15 +131,15 @@ public:
         return true;
     }
 
-    bool pressedW(){
+    bool pressedW() {
         return this->wIsPressed;
     }
 
-    bool pressedS(){
+    bool pressedS() {
         return this->sIsPressed;
     }
 
-    bool pressedG(){
+    bool pressedG() {
         return this->gIsPressed;
     }
 
@@ -153,7 +153,7 @@ private:
     bool gIsPressed = false;
     Ogre::SceneManager* sceneManager;
     Ogre::Camera* playerCamera;
-    
+
 };
 
 
@@ -170,77 +170,77 @@ private:
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
     btCollisionWorld* dynamicsWorld;
 
-    
+
 public:
-    Physics(){
-/*        collisionConfiguration = new btDefaultCollisionConfiguration();
-        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        overlappingPairCache = new btDbvtBroadphase();
-        solver = new btSequentialImpulseConstraintSolver();
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);       
-        ogreAdapter = new Ogre::Bullet::DynamicsWorld(dynamicsWorld);
-*/        
+    Physics() {
+        /*        collisionConfiguration = new btDefaultCollisionConfiguration();
+                dispatcher = new btCollisionDispatcher(collisionConfiguration);
+                overlappingPairCache = new btDbvtBroadphase();
+                solver = new btSequentialImpulseConstraintSolver();
+                dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+                ogreAdapter = new Ogre::Bullet::DynamicsWorld(dynamicsWorld);
+        */
         ogreAdapter = new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0, 9.8, 0));
         dynamicsWorld = ogreAdapter->getBtWorld();
     }
 
 public:
-    btCollisionObject* addCollisionObjectInNode(Ogre::Entity *ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1){
+    btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
         btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
         object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
         return object;
     }
 
-    btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1){
+    btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
     }
 
     btCollisionWorld* getWorld() {
         return this->dynamicsWorld;
     }
-    
-    btCollisionObjectArray getCollisionObjects(){
+
+    btCollisionObjectArray getCollisionObjects() {
         return dynamicsWorld->getCollisionObjectArray();
     }
 
 
 };
 
-class Updater : public Ogre::FrameListener{
+class Updater : public Ogre::FrameListener {
 public:
     Updater() {
 
     }
 
-    Updater(KeyHandler* keyHandler, Player* player, Physics* physics){
+    Updater(KeyHandler* keyHandler, Player* player, Physics* physics) {
         this->player = player;
         this->keyHandler = keyHandler;
         this->physics = physics;
-        if(player->getPlayerFisicBody() != nullptr){
+        if (player->getPlayerFisicBody() != nullptr) {
             this->playerBody = player->getPlayerFisicBody();
         }
 
     }
 
     bool frameStarted(const Ogre::FrameEvent& frameRendered) override {
-        
-        tick += frameRendered.timeSinceLastFrame;
-        if(tick >= 0.016){
 
-            if(keyHandler->pressedW()){
+        tick += frameRendered.timeSinceLastFrame;
+        if (tick >= 0.016) {
+
+            if (keyHandler->pressedW()) {
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
                 player->translate(player->getPlayerCamera()->getRealDirection());
-                 
-                
-            } 
 
-            if(keyHandler->pressedS()){
-                player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection()*-1);
+                std::cout << 'W' << std::endl;
             }
-            
-            if(keyHandler->pressedG()){
+
+            if (keyHandler->pressedS()) {
+                player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection() * -1);
+            }
+
+            if (keyHandler->pressedG()) {
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
-                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl;
             }
 
             tick = 0;
@@ -254,67 +254,65 @@ private:
     KeyHandler* keyHandler;
     Player* player;
     Ogre::Real tick = 0;
-    Ogre::Real tickSpeed = 1.0/60.0;
+    Ogre::Real tickSpeed = 1.0 / 60.0;
 };
 
 class Controllers {
 
 public:
-	Controllers(Ogre::SceneManager* scene, Player* player) {
-		this->frameController = new Updater();
-		this->inputController = new KeyHandler(scene);
-		this->playerInstance = player;
-	}
+    Controllers(Ogre::SceneManager* scene, Player* player) {
+        this->frameController = new Updater();
+        this->inputController = new KeyHandler(scene);
+        this->playerInstance = player;
+    }
 
-	Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity) {
+    Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity) {
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
-        this->physicController = new Physics(); 
-		this->inputController = new KeyHandler(scene);
+        this->physicController = new Physics();
+        this->inputController = new KeyHandler(scene);
         this->frameController = new Updater(inputController, playerInstance, physicController);
-	}
+    }
 
     // Construtor Principal
-	Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){
+    Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
-        this->physicController = new Physics(); 
-		this->inputController = new KeyHandler(scene);
+        this->physicController = new Physics();
+        this->inputController = new KeyHandler(scene);
         this->frameController = new Updater(inputController, playerInstance, physicController);
-	}
+    }
 
 
-	KeyHandler* getInputController() {
-		return this->inputController;
-	}
+    KeyHandler* getInputController() {
+        return this->inputController;
+    }
 
-	Updater* getFrameController() {
-		return this->frameController;
-	}
+    Updater* getFrameController() {
+        return this->frameController;
+    }
 
-    void setPlayerFisicBody(btRigidBody* playerBody){
+    void setPlayerFisicBody(btRigidBody* playerBody) {
         this->playerInstance->setPlayerFisicBody(playerBody);
     }
 
-    btRigidBody* getPlayerBody(){
+    btRigidBody* getPlayerBody() {
         return this->playerInstance->getPlayerFisicBody();
     }
-    
-    btCollisionObject* addCollisionObjectInNode(Ogre::Entity *ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1){
+
+    btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
         return physicController->addCollisionObjectInNode(ent, ct, group, mask);
     }
 
-    btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1){
+    btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
         return this->physicController->addCollisionBodyInNode(mass, ent, ct, cl, group, mask);
     }
-    
-    Physics* getPhysicsController(){
+
+    Physics* getPhysicsController() {
         return this->physicController;
     }
-	
+
 private:
-	KeyHandler* inputController;
-	Updater* frameController;
+    KeyHandler* inputController;
+    Updater* frameController;
     Physics* physicController;
-	Player* playerInstance;
+    Player* playerInstance;
 };
-
-
