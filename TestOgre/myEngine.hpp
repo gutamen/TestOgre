@@ -231,7 +231,7 @@ public:
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
                 player->translate(player->getPlayerCamera()->getRealDirection());
                  
-                std::cout << 'W' << std::endl;
+                
             } 
 
             if(keyHandler->pressedS()){
