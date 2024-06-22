@@ -42,12 +42,18 @@ public:
         return this->playerFisicBody;
     }
 
+    bool translate(Ogre::Vector3 movement){
+        this->playerNode->translate(movement);
+        this->playerFisicBody->translate(Ogre::Bullet::convert(movement)); 
+
+        return true;
+    }
+
 private:
 	Ogre::Camera* playerCamera;
 	Ogre::SceneNode* playerNode;
 	Ogre::Entity* playerEntity;
-    btRigidBody* playerFisicBody; 
-
+    btRigidBody* playerFisicBody = nullptr; 
 
 };
 
@@ -162,7 +168,7 @@ private:
     //std::vector<btCollisionShape*> collisionShapes;
     //std::map<std::string, btRigidBody*> physicsAccessors;
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
-    btDynamicsWorld* dynamicsWorld;
+    btCollisionWorld* dynamicsWorld;
 
     
 public:
@@ -189,7 +195,7 @@ public:
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
     }
 
-    btDynamicsWorld* getWorld() {
+    btCollisionWorld* getWorld() {
         return this->dynamicsWorld;
     }
     
@@ -223,21 +229,17 @@ public:
 
             if(keyHandler->pressedW()){
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
-                player->getPlayerFisicBody()->getWorldTransform().setOrigin(Ogre::Bullet::convert(player->getPlayerNode()->getPosition()));
-                
-                std::cout << player->getPlayerNode()->getPosition().x << std::endl << player->getPlayerNode()->getPosition().y << std::endl << player->getPlayerNode()->getPosition().z << std::endl;
+                player->translate(player->getPlayerCamera()->getRealDirection());
+                 
                 
             } 
 
             if(keyHandler->pressedS()){
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection()*-1);
-                player->getPlayerFisicBody()->getWorldTransform().setOrigin(Ogre::Bullet::convert(player->getPlayerNode()->getPosition()));
-                
             }
             
             if(keyHandler->pressedG()){
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
-                physics->getWorld()->stepSimulation(1);
                 std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
             }
 
@@ -290,6 +292,10 @@ public:
 
     void setPlayerFisicBody(btRigidBody* playerBody){
         this->playerInstance->setPlayerFisicBody(playerBody);
+    }
+
+    btRigidBody* getPlayerBody(){
+        return this->playerInstance->getPlayerFisicBody();
     }
     
     btCollisionObject* addCollisionObjectInNode(Ogre::Entity *ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1){
