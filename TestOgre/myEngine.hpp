@@ -253,11 +253,14 @@ public:
             }
 
             if (keyHandler->pressedG()){
-                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
-                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+//                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
+//                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
                 
-                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
-                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
+                std::cout << playerBody->getUserPointer() << std::endl;
+                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
+
+//                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
+//                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
                 
 //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
 
@@ -272,7 +275,7 @@ public:
 
             }
 
-            physics->getWorld()->performDiscreteCollisionDetection();
+            physics->getWorld()->stepSimulation(0.166);
 
             tick = 0;
         }
@@ -287,6 +290,35 @@ private:
     Ogre::Real tick = 0;
     Ogre::Real tickSpeed = 1.0 / 60.0;
 };
+
+struct EntityCollisionListener
+{
+    const Ogre::MovableObject* entity;
+    Ogre::Bullet::CollisionListener* listener;
+};
+
+static void localTick(btDynamicsWorld* world, btScalar timeStep)
+{
+    int numManifolds = world->getDispatcher()->getNumManifolds();
+    auto manifolds = world->getDispatcher()->getInternalManifoldPointer();
+    for (int i = 0; i < numManifolds; i++)
+    {
+        btPersistentManifold* manifold = manifolds[i];
+
+        for (int j = 0; j < manifold->getNumContacts(); j++)
+        {
+            const btManifoldPoint& mp = manifold->getContactPoint(i);
+            auto body0 = static_cast<EntityCollisionListener*>(manifold->getBody0()->getUserPointer());
+            auto body1 = static_cast<EntityCollisionListener*>(manifold->getBody1()->getUserPointer());
+            std::cout << body0 << std::endl << body1 << std::endl << std::endl;
+//            if (body0->listener)
+//                body0->listener->contact(body1->entity, mp);
+//            if (body1->listener)
+//                body1->listener->contact(body0->entity, mp);
+
+        }
+    }
+}
 
 class Controllers {
 
@@ -309,6 +341,7 @@ public:
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
         btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
+        physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
     }
@@ -348,3 +381,4 @@ private:
     Physics* physicController;
     Player* playerInstance;
 };
+
