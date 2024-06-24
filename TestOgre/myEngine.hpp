@@ -22,6 +22,13 @@ public:
         this->playerEntity = entity;
     };
 
+    Player(Ogre::Camera* camera, Ogre::SceneNode* node, Ogre::Entity* entity, btRigidBody* fisicBody){
+        this->playerCamera = camera;
+        this->playerNode = node;
+        this->playerEntity = entity;
+        this->playerFisicBody = fisicBody;
+    };
+
     Ogre::Camera* getPlayerCamera() {
         return this->playerCamera;
     }
@@ -229,7 +236,7 @@ public:
 
             if (keyHandler->pressedW()) {
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection());
-                player->translate(player->getPlayerCamera()->getRealDirection());
+//                player->translate(player->getPlayerCamera()->getRealDirection());
 
 //                std::cout << 'W' << std::endl;
             }
@@ -238,13 +245,15 @@ public:
                 player->getPlayerNode()->translate(player->getPlayerCamera()->getRealDirection() * -1);
             }
 
-            if (keyHandler->pressedG()) {
-//                std::cout << physics->getCollisionObjects().size() << std::endl;
+            if (keyHandler->pressedG()){
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
-//                std::cout << body0.getX() << " " << body0.getY() << " " << body0.getZ() << std::endl;
+
+
+                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl;
+                std::cout << player->getPlayerFisicBody()->getUserPointer() << std::endl << std::endl;
 
                 std::cout << physics->getCollisionObjects().at(0) << std::endl;
-//                std::cout << player->getPlayerFisicBody() << std::endl;
+                std::cout << player->getPlayerFisicBody() << std::endl << std::endl;
 
             }
 
@@ -255,7 +264,7 @@ public:
 
 private:
     Physics* physics;
-    btRigidBody* playerBody;
+    btRigidBody* playerBody = nullptr;
     KeyHandler* keyHandler;
     Player* player;
     Ogre::Real tick = 0;
@@ -279,10 +288,11 @@ public:
     }
 
     // Construtor Principal
-    Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
-        this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
+    Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){     
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
+        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE);
+        this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
     }
 

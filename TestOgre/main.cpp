@@ -118,13 +118,12 @@ int main(int argc, char* argv[])
     //! [main]
         // register for input events
 
-    playerCollision* teste = new playerCollision();
-    Controllers* controller = new Controllers(scnMgr, camera, node, ent);
+//    playerCollision* teste = new playerCollision();
+    Controllers* controller = new Controllers(scnMgr, camera, node, ent, true);
     Physics* fisic = controller->getPhysicsController();
-    btRigidBody* playerBody = controller->addCollisionBodyInNode(0, ent, Ogre::Bullet::CT_SPHERE, teste);
-    controller->setPlayerFisicBody(playerBody);
-
-    cout << playerBody << endl << fisic->getCollisionObjects().at(0) << endl;
+    btRigidBody* playerBody = controller->getPlayerBody();
+    
+    cout << fisic->getCollisionObjects().at(0) << endl;
     cout << controller->getPlayerBody() << endl;
 
     controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
@@ -145,10 +144,7 @@ int main(int argc, char* argv[])
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
 
-
-
     ctx.getRoot()->startRendering();
-
 
     ctx.closeApp();
     //! [main]
