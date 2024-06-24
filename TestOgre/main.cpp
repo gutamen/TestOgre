@@ -19,26 +19,6 @@
 
 using namespace std;
 
-class playerCollision : public Ogre::Bullet::CollisionListener
-{
-public:
-    playerCollision() {
-
-    }
-
-    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
-        cout << "teste" << endl;
-    }
-};
-
-
-
-
-//! [key_handler]
-
-
-
-//! [key_handler]
 
 int main(int argc, char* argv[])
 {
@@ -123,8 +103,8 @@ int main(int argc, char* argv[])
     Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->getPlayerBody();
     
-    cout << fisic->getCollisionObjects().at(0) << endl;
-    cout << controller->getPlayerBody() << endl << endl;
+//    cout << fisic->getCollisionObjects().at(0) << endl;
+//    cout << controller->getPlayerBody() << endl << endl;
 
 //    cout << fisic << endl << endl;
 
