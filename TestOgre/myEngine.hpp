@@ -16,8 +16,7 @@
 #include <iterator>
 
 
-struct playerCollision : public Ogre::Bullet::CollisionListener
-{
+struct playerCollision : public Ogre::Bullet::CollisionListener{
 
     void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
         std::cout << "teste" << std::endl;
@@ -202,6 +201,8 @@ public:
     }
 
 public:
+
+    // Não utilizar, função não faz o define o ponteiro de usuário
     btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
         btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
         object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
@@ -253,14 +254,14 @@ public:
             }
 
             if (keyHandler->pressedG()){
-//                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
-//                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
+                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
                 
-                std::cout << playerBody->getUserPointer() << std::endl;
-                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
+//                std::cout << playerBody->getUserPointer() << std::endl;
+//                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
 
-//                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
-//                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
+                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
+                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
                 
 //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
 
@@ -310,11 +311,14 @@ static void localTick(btDynamicsWorld* world, btScalar timeStep)
             const btManifoldPoint& mp = manifold->getContactPoint(i);
             auto body0 = static_cast<EntityCollisionListener*>(manifold->getBody0()->getUserPointer());
             auto body1 = static_cast<EntityCollisionListener*>(manifold->getBody1()->getUserPointer());
-            std::cout << body0 << std::endl << body1 << std::endl << std::endl;
-//            if (body0->listener)
-//                body0->listener->contact(body1->entity, mp);
-//            if (body1->listener)
-//                body1->listener->contact(body0->entity, mp);
+            
+            std::cout << body0 << std::endl << body1 << std::endl;
+
+
+            if (body0->listener)
+                body0->listener->contact(body1->entity, mp);
+            if (body1->listener)
+                body1->listener->contact(body0->entity, mp);
 
         }
     }
@@ -341,7 +345,7 @@ public:
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
         btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
-        physicController->getWorld()->setInternalTickCallback(localTick);
+//        physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
     }

@@ -106,11 +106,10 @@ int main(int argc, char* argv[])
 //    cout << fisic->getCollisionObjects().at(0) << endl;
 //    cout << controller->getPlayerBody() << endl << endl;
 
-//    cout << fisic << endl << endl;
-
 //    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+    controller->addCollisionBodyInNode(0, scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
 
+//    cout << fisic->getCollisionObjects().size() << endl << endl;
 
 //    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
 //    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
