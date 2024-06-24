@@ -124,9 +124,11 @@ int main(int argc, char* argv[])
     btRigidBody* playerBody = controller->getPlayerBody();
     
     cout << fisic->getCollisionObjects().at(0) << endl;
-    cout << controller->getPlayerBody() << endl;
+    cout << controller->getPlayerBody() << endl << endl;
 
-    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
+//    cout << fisic << endl << endl;
+
+//    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
 
 

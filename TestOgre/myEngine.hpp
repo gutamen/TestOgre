@@ -175,7 +175,7 @@ private:
     //std::vector<btCollisionShape*> collisionShapes;
     //std::map<std::string, btRigidBody*> physicsAccessors;
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
-    btCollisionWorld* dynamicsWorld;
+    btDynamicsWorld* dynamicsWorld;
 
 
 public:
@@ -202,7 +202,7 @@ public:
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
     }
 
-    btCollisionWorld* getWorld() {
+    btDynamicsWorld* getWorld() {
         return this->dynamicsWorld;
     }
 
@@ -249,11 +249,13 @@ public:
                 btVector3 body0 = physics->getCollisionObjects().at(0)->getWorldTransform().getOrigin();
 
 
-                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl;
-                std::cout << player->getPlayerFisicBody()->getUserPointer() << std::endl << std::endl;
+//                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl;
+//                std::cout << player->getPlayerFisicBody()->getUserPointer() << std::endl << std::endl;
 
                 std::cout << physics->getCollisionObjects().at(0) << std::endl;
                 std::cout << player->getPlayerFisicBody() << std::endl << std::endl;
+
+//                std::cout << physics << std::endl << std::endl;
 
             }
 
