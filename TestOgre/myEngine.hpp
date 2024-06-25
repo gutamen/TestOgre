@@ -1,3 +1,4 @@
+#include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <BulletDynamics/Dynamics/btDynamicsWorld.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <Ogre.h>
@@ -176,33 +177,28 @@ private:
 class Physics {
 
 private:
-    //btDefaultCollisionConfiguration* collisionConfiguration;
-    //btCollisionDispatcher* dispatcher;
-    //btBroadphaseInterface* overlappingPairCache;
-    //btSequentialImpulseConstraintSolver* solver;
-    //btDiscreteDynamicsWorld* dynamicsWorld;
-    //std::vector<btCollisionShape*> collisionShapes;
-    //std::map<std::string, btRigidBody*> physicsAccessors;
+    btDefaultCollisionConfiguration* collisionConfiguration;
+    btCollisionDispatcher* dispatcher;
+    btBroadphaseInterface* overlappingPairCache;
+    btSequentialImpulseConstraintSolver* solver;
+    btDiscreteDynamicsWorld* dynamicsWorld;
+    std::vector<btCollisionShape*> collisionShapes;
+    std::map<std::string, btRigidBody*> physicsAccessors;
     Ogre::Bullet::DynamicsWorld* ogreAdapter;
-    btDynamicsWorld* dynamicsWorld;
 
 
 public:
-    Physics() {
-        /*        collisionConfiguration = new btDefaultCollisionConfiguration();
-                dispatcher = new btCollisionDispatcher(collisionConfiguration);
-                overlappingPairCache = new btDbvtBroadphase();
-                solver = new btSequentialImpulseConstraintSolver();
-                dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-                ogreAdapter = new Ogre::Bullet::DynamicsWorld(dynamicsWorld);
-        */
-        ogreAdapter = new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0, 9.8, 0));
-        dynamicsWorld = ogreAdapter->getBtWorld();
+    Physics(){
+        collisionConfiguration = new btDefaultCollisionConfiguration();
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        overlappingPairCache = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver();
+        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        ogreAdapter = new Ogre::Bullet::DynamicsWorld(dynamicsWorld);
     }
 
 public:
 
-    // Não utilizar, função não faz o define o ponteiro de usuário
     btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
         btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
         object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
@@ -213,7 +209,7 @@ public:
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
     }
 
-    btDynamicsWorld* getWorld() {
+    btDiscreteDynamicsWorld* getWorld() {
         return this->dynamicsWorld;
     }
 
@@ -277,6 +273,7 @@ public:
             }
 
             physics->getWorld()->stepSimulation(0.166);
+//            static_cast<btDiscreteDynamicsWorld*>(physics->getWorld())->stepSimulation(0.166);
 
             tick = 0;
         }
@@ -311,15 +308,10 @@ static void localTick(btDynamicsWorld* world, btScalar timeStep)
             const btManifoldPoint& mp = manifold->getContactPoint(i);
             auto body0 = static_cast<EntityCollisionListener*>(manifold->getBody0()->getUserPointer());
             auto body1 = static_cast<EntityCollisionListener*>(manifold->getBody1()->getUserPointer());
-            
-            std::cout << body0 << std::endl << body1 << std::endl;
-
-
             if (body0->listener)
                 body0->listener->contact(body1->entity, mp);
             if (body1->listener)
                 body1->listener->contact(body0->entity, mp);
-
         }
     }
 }
@@ -345,7 +337,7 @@ public:
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
         btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
-//        physicController->getWorld()->setInternalTickCallback(localTick);
+        physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
     }
