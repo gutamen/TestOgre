@@ -86,13 +86,14 @@ int main(int argc, char* argv[])
     ctx.getRenderWindow()->addViewport(camera);
 
     // finally something to render
-    Ogre::Entity* ent = scnMgr->createEntity("Suzanne.mesh");
+    Ogre::Entity* ent = scnMgr->createEntity("player", "Suzanne.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode(camera->getDerivedPosition());
     node->attachObject(ent);
     camera->detachFromParent();
     node->attachObject(camera);
     //! [setup]
-
+    
+    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition());
 
 
     //! [main]
@@ -107,9 +108,9 @@ int main(int argc, char* argv[])
 //    cout << controller->getPlayerBody() << endl << endl;
 
 //    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    controller->addCollisionBodyInNode(0, scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-
-    cout << fisic->getCollisionObjects().size() << endl << endl;
+    controller->addCollisionBodyInNode(0, scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_TRIMESH);
+    
+//    cout << fisic->getCollisionObjects().size() << endl << endl;
 
 //    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
 //    btVector3 body1 = playerBody->getWorldTransform().getOrigin();

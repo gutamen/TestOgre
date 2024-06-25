@@ -258,6 +258,7 @@ public:
 
                 btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
                 std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
+//                std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl << player->getPlayerEntity()->getParentSceneNode()->getScale() << std::endl << std::endl;
                 
 //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
 
@@ -273,8 +274,8 @@ public:
             }
 
             physics->getWorld()->stepSimulation(0.166);
-//            static_cast<btDiscreteDynamicsWorld*>(physics->getWorld())->stepSimulation(0.166);
-
+//            physics->getWorld()->performDiscreteCollisionDetection();
+            
             tick = 0;
         }
         return true;
@@ -299,6 +300,7 @@ static void localTick(btDynamicsWorld* world, btScalar timeStep)
 {
     int numManifolds = world->getDispatcher()->getNumManifolds();
     auto manifolds = world->getDispatcher()->getInternalManifoldPointer();
+//    std::cout << world->getDispatcher() << std::endl;
     for (int i = 0; i < numManifolds; i++)
     {
         btPersistentManifold* manifold = manifolds[i];
@@ -336,7 +338,7 @@ public:
     Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){     
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
-        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
+        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_TRIMESH, new playerCollision());
         physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
