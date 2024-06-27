@@ -108,7 +108,8 @@ int main(int argc, char* argv[])
 //    cout << controller->getPlayerBody() << endl << endl;
 
 //    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
-    controller->addCollisionBodyInNode(0, scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_TRIMESH);
+    controller->addCollisionBodyInNode(0.0, scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+//    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
     
 //    cout << fisic->getCollisionObjects().size() << endl << endl;
 

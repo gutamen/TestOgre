@@ -273,9 +273,14 @@ public:
 
             }
 
-            physics->getWorld()->stepSimulation(0.166);
-//            physics->getWorld()->performDiscreteCollisionDetection();
-            
+//            physics->getWorld()->stepSimulation(0.166);
+            physics->getWorld()->performDiscreteCollisionDetection();
+            std::cout << physics->getWorld()->getDispatcher()->getNumManifolds() << std::endl;
+//            btVector3 body0 = physics->getWorld()->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+//            btVector3 body1 = playerBody->getWorldTransform().getOrigin();
+
+//            std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl;
+//            std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl;
             tick = 0;
         }
         return true;
@@ -338,10 +343,16 @@ public:
     Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){     
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
-        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_TRIMESH, new playerCollision());
+        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
         physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
+       
+        btRigidBody* teste = new btRigidBody(0.1, new btDefaultMotionState(), new btSphereShape(2));
+        teste->getWorldTransform().setOrigin(Ogre::Bullet::convert(scene->getEntity("Suzanne")->getParentNode()->getPosition()));
+//        std::cout << Ogre::Bullet::convert(teste->getWorldTransform().getOrigin()) << std::endl;
+
+        this->physicController->getWorld()->addRigidBody(teste);
     }
 
 
@@ -362,7 +373,7 @@ public:
     }
 
     btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
-        return physicController->addCollisionObjectInNode(ent, ct, group, mask);
+        return this->physicController->addCollisionObjectInNode(ent, ct, group, mask);
     }
 
     btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
