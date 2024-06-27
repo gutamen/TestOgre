@@ -20,7 +20,7 @@
 struct playerCollision : public Ogre::Bullet::CollisionListener{
 
     void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
-        std::cout << "teste" << std::endl;
+        std::cout << other->getName() << std::endl;
     }
 };
 
@@ -199,11 +199,7 @@ public:
 
 public:
 
-    btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
-        btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
-        object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
-        return object;
-    }
+btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1);
 
     btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
         return this->ogreAdapter->addRigidBody(mass, ent, ct, cl, group, mask);
@@ -219,6 +215,7 @@ public:
 
 
 };
+
 
 class Updater : public Ogre::FrameListener {
 public:
@@ -273,9 +270,9 @@ public:
 
             }
 
-//            physics->getWorld()->stepSimulation(0.166);
-            physics->getWorld()->performDiscreteCollisionDetection();
-            std::cout << physics->getWorld()->getDispatcher()->getNumManifolds() << std::endl;
+            physics->getWorld()->stepSimulation(0.166);
+//            physics->getWorld()->performDiscreteCollisionDetection();
+//            std::cout << physics->getWorld()->getDispatcher()->getNumManifolds() << std::endl;
 //            btVector3 body0 = physics->getWorld()->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
 //            btVector3 body1 = playerBody->getWorldTransform().getOrigin();
 
@@ -315,10 +312,10 @@ static void localTick(btDynamicsWorld* world, btScalar timeStep)
             const btManifoldPoint& mp = manifold->getContactPoint(i);
             auto body0 = static_cast<EntityCollisionListener*>(manifold->getBody0()->getUserPointer());
             auto body1 = static_cast<EntityCollisionListener*>(manifold->getBody1()->getUserPointer());
-            if (body0->listener)
-                body0->listener->contact(body1->entity, mp);
-            if (body1->listener)
-                body1->listener->contact(body0->entity, mp);
+            if (body0 != 0 && body0->listener)
+                body0->listener->contact(body1 == 0 ? nullptr : body1->entity, mp);
+            if (body1 != 0 && body1->listener)
+                body1->listener->contact(body0 == 0 ? nullptr : body0->entity, mp);
         }
     }
 }
@@ -348,11 +345,10 @@ public:
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
        
-        btRigidBody* teste = new btRigidBody(0.1, new btDefaultMotionState(), new btSphereShape(2));
-        teste->getWorldTransform().setOrigin(Ogre::Bullet::convert(scene->getEntity("Suzanne")->getParentNode()->getPosition()));
+//        btRigidBody* teste = new btRigidBody(0.1, new btDefaultMotionState(), new btSphereShape(2));
+//        teste->getWorldTransform().setOrigin(Ogre::Bullet::convert(scene->getEntity("Suzanne")->getParentNode()->getPosition()));
 //        std::cout << Ogre::Bullet::convert(teste->getWorldTransform().getOrigin()) << std::endl;
-
-        this->physicController->getWorld()->addRigidBody(teste);
+//        this->physicController->getWorld()->addRigidBody(teste);
     }
 
 
@@ -372,8 +368,8 @@ public:
         return this->playerInstance->getPlayerFisicBody();
     }
 
-    btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, int group = 1, int mask = -1) {
-        return this->physicController->addCollisionObjectInNode(ent, ct, group, mask);
+    btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
+        return this->physicController->addCollisionObjectInNode(ent, ct, cl, group, mask);
     }
 
     btRigidBody* addCollisionBodyInNode(float mass, Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl = nullptr, int group = 1, int mask = -1) {
@@ -391,3 +387,9 @@ private:
     Player* playerInstance;
 };
 
+btCollisionObject* Physics::addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl, int group, int mask) {
+    btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
+    object->setUserPointer(new EntityCollisionListener{ent, cl});
+    object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
+    return object;
+}
