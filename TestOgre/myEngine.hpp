@@ -19,7 +19,12 @@
 
 #ifndef ENGINE_DEFINITION
 #define ENGINE_DEFINITION
+
 namespace MyEngine{
+
+struct playerRay : public Ogre::Bullet::RayResultCallback{
+
+};
 
 struct playerCollision : public Ogre::Bullet::CollisionListener{
 
@@ -29,8 +34,22 @@ struct playerCollision : public Ogre::Bullet::CollisionListener{
     }
     Ogre::MovableObject* player;
     void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
-        std::cout << other->getName() << std::endl;
+//        std::cout << other->getName() << std::endl;
         std::cout << player->getName() << std::endl;
+    }
+
+};
+
+struct testCollision : public Ogre::Bullet::CollisionListener{
+
+
+    testCollision(Ogre::MovableObject* object) {
+        this->object = object;
+    }
+    Ogre::MovableObject* object;
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
+//        std::cout << other->getName() << std::endl;
+        std::cout << object->getName() << std::endl;
     }
 
 };
@@ -220,6 +239,10 @@ btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::Col
         return this->dynamicsWorld;
     }
 
+    Ogre::Bullet::DynamicsWorld* getOgreWorld(){
+        return this->ogreAdapter;
+    }
+
     btCollisionObjectArray getCollisionObjects() {
         return dynamicsWorld->getCollisionObjectArray();
     }
@@ -258,14 +281,15 @@ public:
             }
 
             if (keyHandler->pressedG()){
-                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
-                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+//                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
+//                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+//                i, RayResultCallback *callback) 
                 
 //                std::cout << playerBody->getUserPointer() << std::endl;
 //                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
 
-                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
-                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
+//                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
+//                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
 //                std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl << player->getPlayerEntity()->getParentSceneNode()->getScale() << std::endl << std::endl;
                 
 //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
