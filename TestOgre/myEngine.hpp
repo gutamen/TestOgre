@@ -4,18 +4,20 @@
 #include <Ogre.h>
 #include <OgreApplicationContext.h>
 #include <OgrePrerequisites.h>
+#include <OgreRay.h>
 #include <OgreSceneManager.h>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <OgreBullet.h>
 #include <OgreEntity.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
+#include <algorithm>
 #include <iostream>
 #include <LinearMath/btTransform.h>
 #include <LinearMath/btVector3.h>
 #include <OgreFrameListener.h>
 #include <iterator>
-
+#include <limits>
 
 #ifndef ENGINE_DEFINITION
 #define ENGINE_DEFINITION
@@ -23,7 +25,17 @@
 namespace MyEngine{
 
 struct playerRay : public Ogre::Bullet::RayResultCallback{
+    float distance = std::numeric_limits<float>::max();
 
+    void addSingleResult(const Ogre::MovableObject* other, float distance) override{
+        this->distance = distance;
+    }
+
+    float getDistanceInDirection(){
+        float aux = distance;
+        distance = std::numeric_limits<float>::max();
+        return aux;
+    }
 };
 
 struct playerCollision : public Ogre::Bullet::CollisionListener{
@@ -35,7 +47,7 @@ struct playerCollision : public Ogre::Bullet::CollisionListener{
     Ogre::MovableObject* player;
     void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
 //        std::cout << other->getName() << std::endl;
-        std::cout << player->getName() << std::endl;
+//        std::cout << player->getName() << std::endl;
     }
 
 };
@@ -264,6 +276,7 @@ public:
         if (player->getPlayerFisicBody() != nullptr) {
             this->playerBody = player->getPlayerFisicBody();
         }
+        this->playerDirectionTester = new playerRay();
 
     }
 
@@ -271,20 +284,22 @@ public:
 
         tick += frameRendered.timeSinceLastFrame;
         if (tick >= 0.016) {
-
-            if (keyHandler->pressedW()) {
-                player->translate(player->getPlayerCamera()->getRealDirection());
+            if((keyHandler->pressedW() && !keyHandler->pressedS()) || (keyHandler->pressedS() && !keyHandler->pressedW())){
+                if (keyHandler->pressedW()) {
+                    Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
+                    physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
+                    player->translate(cameraDirection);
+                }
+                else{
+                    Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
+                    physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
+                    player->translate(cameraDirection * -1);
+                }
             }
-
-            if (keyHandler->pressedS()) {
-                player->translate(player->getPlayerCamera()->getRealDirection() * -1);
-            }
-
             if (keyHandler->pressedG()){
 //                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
 //                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
-//                i, RayResultCallback *callback) 
-                
+                std::cout << playerDirectionTester->getDistanceInDirection() << std::endl;
 //                std::cout << playerBody->getUserPointer() << std::endl;
 //                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
 
@@ -319,6 +334,7 @@ public:
     }
 
 private:
+    playerRay* playerDirectionTester;
     Physics* physics;
     btRigidBody* playerBody = nullptr;
     KeyHandler* keyHandler;

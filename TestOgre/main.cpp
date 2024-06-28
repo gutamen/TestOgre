@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     node->attachObject(camera);
     //! [setup]
     
-    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition());
+    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
 
 
     //! [main]
