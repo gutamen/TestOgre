@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 //    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
 //    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
 
-//    cout << ent->getName() << endl;
+
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
     //OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
 

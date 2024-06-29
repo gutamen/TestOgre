@@ -18,15 +18,10 @@
 
 
 struct playerCollision : public Ogre::Bullet::CollisionListener{
-    
-    playerCollision(Ogre::MovableObject* player) {
-        this->player = player;
-    }
-    Ogre::MovableObject* player;
-    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
-        std::cout << player->getName() << std::endl;
-    }
 
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
+        std::cout << other->getName() << std::endl;
+    }
 };
 
 class Player {
@@ -345,7 +340,7 @@ public:
     Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){     
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
-        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
+        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
         physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
