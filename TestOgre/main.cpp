@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
     camera->detachFromParent();
     node->attachObject(camera);
     //! [setup]
-    
-    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition());
+
+    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
 
 
     //! [main]
@@ -103,21 +103,21 @@ int main(int argc, char* argv[])
     MyEngine::Controllers* controller = new MyEngine::Controllers(scnMgr, camera, node, ent, true);
     MyEngine::Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->getPlayerBody();
-    
-//    cout << fisic->getCollisionObjects().at(0) << endl;
-//    cout << controller->getPlayerBody() << endl << endl;
-    
-//    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
+
+    //    cout << fisic->getCollisionObjects().at(0) << endl;
+    //    cout << controller->getPlayerBody() << endl << endl;
+
+    //    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-//    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-    
-//    cout << fisic->getCollisionObjects().size() << endl << endl;
+    //    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
 
-//    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-//    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
+    //    cout << fisic->getCollisionObjects().size() << endl << endl;
 
-//    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
-//    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
+    //    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
+    //    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
+
+    //    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
+    //    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
 
 
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
