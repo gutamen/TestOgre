@@ -5,3 +5,5 @@ g++ main.cpp -lOgreMain -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -I/usr/in
 g++ main.cpp -L~/ogre/out/Dependencies/lib -lOgreMain  -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -lOgreBullet -I/usr/local/include/OGRE  -I/usr/local/include/OGRE/RTShaderSystem -I/usr/local/include/OGRE/Overlay -I/usr/local/include/OGRE/Bites -I/usr/local/include/OGRE/Bullet -I/home/gustavo/ogre/out/Dependencies/include/bullet
 
 g++ main.cpp  -lOgreMain  -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -lOgreBullet -I/usr/local/include/OGRE  -I/usr/local/include/OGRE/RTShaderSystem -I/usr/local/include/OGRE/Overlay -I/usr/local/include/OGRE/Bites -I/usr/local/include/OGRE/Bullet -I/home/gustavo/ogre/out/Dependencies/include/bullet
+
+g++ myEngine.cpp main.cpp  -lOgreMain  -lOgreBites -lOgreRTShaderSystem -lOgreOverlay -lOgreBullet -I/usr/local/include/OGRE  -I/usr/local/include/OGRE/RTShaderSystem -I/usr/local/include/OGRE/Overlay -I/usr/local/include/OGRE/Bites -I/usr/local/include/OGRE/Bullet -I/home/gustavo/ogre/out/Dependencies/include/bullet

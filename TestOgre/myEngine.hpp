@@ -4,24 +4,66 @@
 #include <Ogre.h>
 #include <OgreApplicationContext.h>
 #include <OgrePrerequisites.h>
+#include <OgreRay.h>
 #include <OgreSceneManager.h>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <OgreBullet.h>
 #include <OgreEntity.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
+#include <algorithm>
 #include <iostream>
 #include <LinearMath/btTransform.h>
 #include <LinearMath/btVector3.h>
 #include <OgreFrameListener.h>
 #include <iterator>
+#include <limits>
 
+#ifndef ENGINE_DEFINITION
+#define ENGINE_DEFINITION
+
+namespace MyEngine{
+
+struct playerRay : public Ogre::Bullet::RayResultCallback{
+    float distance = std::numeric_limits<float>::max();
+
+    void addSingleResult(const Ogre::MovableObject* other, float distance) override{
+        this->distance = distance;
+    }
+
+    float getDistanceInDirection(){
+        float aux = distance;
+        distance = std::numeric_limits<float>::max();
+        return aux;
+    }
+};
 
 struct playerCollision : public Ogre::Bullet::CollisionListener{
 
-    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
-        std::cout << other->getName() << std::endl;
+
+    playerCollision(Ogre::MovableObject* player) {
+        this->player = player;
     }
+    Ogre::MovableObject* player;
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
+//        std::cout << other->getName() << std::endl;
+//        std::cout << player->getName() << std::endl;
+    }
+
+};
+
+struct testCollision : public Ogre::Bullet::CollisionListener{
+
+
+    testCollision(Ogre::MovableObject* object) {
+        this->object = object;
+    }
+    Ogre::MovableObject* object;
+    void contact(const Ogre::MovableObject* other, const btManifoldPoint& manifoldPoint) override {
+//        std::cout << other->getName() << std::endl;
+        std::cout << object->getName() << std::endl;
+    }
+
 };
 
 class Player {
@@ -209,6 +251,10 @@ btCollisionObject* addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::Col
         return this->dynamicsWorld;
     }
 
+    Ogre::Bullet::DynamicsWorld* getOgreWorld(){
+        return this->ogreAdapter;
+    }
+
     btCollisionObjectArray getCollisionObjects() {
         return dynamicsWorld->getCollisionObjectArray();
     }
@@ -230,6 +276,7 @@ public:
         if (player->getPlayerFisicBody() != nullptr) {
             this->playerBody = player->getPlayerFisicBody();
         }
+        this->playerDirectionTester = new playerRay();
 
     }
 
@@ -237,24 +284,27 @@ public:
 
         tick += frameRendered.timeSinceLastFrame;
         if (tick >= 0.016) {
-
-            if (keyHandler->pressedW()) {
-                player->translate(player->getPlayerCamera()->getRealDirection());
+            if((keyHandler->pressedW() && !keyHandler->pressedS()) || (keyHandler->pressedS() && !keyHandler->pressedW())){
+                if (keyHandler->pressedW()) {
+                    Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
+                    physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
+                    player->translate(cameraDirection);
+                }
+                else{
+                    Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
+                    physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
+                    player->translate(cameraDirection * -1);
+                }
             }
-
-            if (keyHandler->pressedS()) {
-                player->translate(player->getPlayerCamera()->getRealDirection() * -1);
-            }
-
             if (keyHandler->pressedG()){
-                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
-                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
-                
+//                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
+//                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
+                std::cout << playerDirectionTester->getDistanceInDirection() << std::endl;
 //                std::cout << playerBody->getUserPointer() << std::endl;
 //                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
 
-                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
-                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
+//                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
+//                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
 //                std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl << player->getPlayerEntity()->getParentSceneNode()->getScale() << std::endl << std::endl;
                 
 //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
@@ -284,6 +334,7 @@ public:
     }
 
 private:
+    playerRay* playerDirectionTester;
     Physics* physics;
     btRigidBody* playerBody = nullptr;
     KeyHandler* keyHandler;
@@ -340,7 +391,7 @@ public:
     Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill){     
         this->physicController = new Physics();
         this->inputController = new KeyHandler(scene);
-        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision());
+        btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
         physicController->getWorld()->setInternalTickCallback(localTick);
         this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
         this->frameController = new Updater(inputController, playerInstance, physicController);
@@ -387,9 +438,6 @@ private:
     Player* playerInstance;
 };
 
-btCollisionObject* Physics::addCollisionObjectInNode(Ogre::Entity* ent, Ogre::Bullet::ColliderType ct, Ogre::Bullet::CollisionListener* cl, int group, int mask) {
-    btCollisionObject* object = this->ogreAdapter->addCollisionObject(ent, ct, group, mask);
-    object->setUserPointer(new EntityCollisionListener{ent, cl});
-    object->getWorldTransform().setOrigin(Ogre::Bullet::convert(ent->getParentNode()->getPosition()));
-    return object;
-}
+} 
+// namespace MyEngine
+#endif

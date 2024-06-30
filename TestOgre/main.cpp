@@ -93,15 +93,15 @@ int main(int argc, char* argv[])
     node->attachObject(camera);
     //! [setup]
     
-    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition());
+    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
 
 
     //! [main]
         // register for input events
 
 //    playerCollision* teste = new playerCollision();
-    Controllers* controller = new Controllers(scnMgr, camera, node, ent, true);
-    Physics* fisic = controller->getPhysicsController();
+    MyEngine::Controllers* controller = new MyEngine::Controllers(scnMgr, camera, node, ent, true);
+    MyEngine::Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->getPlayerBody();
     
 //    cout << fisic->getCollisionObjects().at(0) << endl;
