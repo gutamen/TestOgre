@@ -288,12 +288,32 @@ namespace MyEngine {
                     if (keyHandler->pressedW()) {
                         Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
                         physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
-                        player->translate(cameraDirection);
+                        float distance = playerDirectionTester->getDistanceInDirection();
+                        std::cout << distance << std::endl;
+                        if (distance > player->getPlayerEntity()->getBoundingRadius()) {
+                            cameraDirection.normalise();
+                            player->translate(cameraDirection);
+                        }
+                        else if (distance > 0) {
+                            cameraDirection.normalise();
+                            cameraDirection = cameraDirection * player->getPlayerEntity()->getBoundingRadius();
+                            player->translate(cameraDirection);
+                        }
+//                        std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl;
                     }
                     else {
                         Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
                         physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
-                        player->translate(cameraDirection * -1);
+                        float distance = playerDirectionTester->getDistanceInDirection();
+                        if (distance > player->getPlayerEntity()->getBoundingRadius()) {
+                            cameraDirection.normalise();
+                            player->translate(cameraDirection * -1);
+                        }
+                        else if (distance > 0) {
+                            cameraDirection.normalise();
+                            cameraDirection = cameraDirection * player->getPlayerEntity()->getBoundingRadius();
+                            player->translate(cameraDirection * -1);
+                        }
                     }
                 }
                 if (keyHandler->pressedG()) {
