@@ -8,6 +8,7 @@
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <LinearMath/btVector3.h>
 #include <OgreNode.h>
+#include <OgreOverlaySystem.h>
 #include <OgrePrerequisites.h>
 #include <iostream>
 #include <fstream>
@@ -93,7 +94,7 @@ int main(int argc, char* argv[])
     node->attachObject(camera);
     //! [setup]
 
-    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
+//    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
 
 
     //! [main]
@@ -121,8 +122,11 @@ int main(int argc, char* argv[])
 
 
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
-    //OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", ctx.getRenderWindow());
-
+    //Ogre::OverlaySystem* overlays = new Ogre::OverlaySystem();
+    //scnMgr->addRenderQueueListener(overlays);
+    OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", tela);
+    controlador->createButton(OgreBites::TrayLocation::TL_BOTTOM, "Butao", "butao");
+    controlador->showAll();
 
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());

@@ -286,32 +286,23 @@ namespace MyEngine {
             if (tick >= 0.016) {
                 if ((keyHandler->pressedW() && !keyHandler->pressedS()) || (keyHandler->pressedS() && !keyHandler->pressedW())) {
                     if (keyHandler->pressedW()) {
+                        // Comando de movimentação para frente
                         Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
                         physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
                         float distance = playerDirectionTester->getDistanceInDirection();
-                        std::cout << distance << std::endl;
+//                        std::cout << distance << std::endl;
                         if (distance > player->getPlayerEntity()->getBoundingRadius()) {
                             cameraDirection.normalise();
                             player->translate(cameraDirection);
                         }
-                        else if (distance > 0) {
-                            cameraDirection.normalise();
-                            cameraDirection = cameraDirection * player->getPlayerEntity()->getBoundingRadius();
-                            player->translate(cameraDirection);
-                        }
-//                        std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl;
                     }
                     else {
+                        // Comando de movimentação para trás
                         Ogre::Vector3 cameraDirection = player->getPlayerCamera()->getRealDirection();
-                        physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection()), playerDirectionTester);
+                        physics->getOgreWorld()->rayTest(Ogre::Ray(player->getPlayerNode()->getPosition(), player->getPlayerCamera()->getRealDirection() * -1), playerDirectionTester);
                         float distance = playerDirectionTester->getDistanceInDirection();
                         if (distance > player->getPlayerEntity()->getBoundingRadius()) {
                             cameraDirection.normalise();
-                            player->translate(cameraDirection * -1);
-                        }
-                        else if (distance > 0) {
-                            cameraDirection.normalise();
-                            cameraDirection = cameraDirection * player->getPlayerEntity()->getBoundingRadius();
                             player->translate(cameraDirection * -1);
                         }
                     }
