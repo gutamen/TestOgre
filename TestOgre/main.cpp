@@ -10,6 +10,8 @@
 #include <OgreNode.h>
 #include <OgreOverlaySystem.h>
 #include <OgrePrerequisites.h>
+#include <OgreResourceGroupManager.h>
+#include <OgreResourceManager.h>
 #include <iostream>
 #include <fstream>
 #include "OgreMesh.h"
@@ -24,12 +26,13 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 
-    //! [constructor]
+//! [constructor]
     OgreBites::ApplicationContext ctx("OgreTutorialApp");
     ctx.initApp();
-    //! [constructor]
+    ctx.loadResources();
+//! [constructor]
 
-    //! [setup]
+//! [setup]
         // get a pointer to the already created root
     Ogre::Root* root = ctx.getRoot();
     Ogre::SceneManager* scnMgr = root->createSceneManager();
@@ -92,49 +95,38 @@ int main(int argc, char* argv[])
     node->attachObject(ent);
     camera->detachFromParent();
     node->attachObject(camera);
-    //! [setup]
+//! [setup]
 
 //    node->setPosition(scnMgr->getEntity("Suzanne")->getParentNode()->getPosition() + Ogre::Vector3(0, 3.5, 0));
 
 
-    //! [main]
-        // register for input events
+//! [main]
+    // register for input events
 
-//    playerCollision* teste = new playerCollision();
-    MyEngine::Controllers* controller = new MyEngine::Controllers(scnMgr, camera, node, ent, true);
+    MyEngine::Controllers* controller = new MyEngine::Controllers(ctx, scnMgr, camera, node, ent, true);
     MyEngine::Physics* fisic = controller->getPhysicsController();
     btRigidBody* playerBody = controller->getPlayerBody();
 
-    //    cout << fisic->getCollisionObjects().at(0) << endl;
-    //    cout << controller->getPlayerBody() << endl << endl;
-
-    //    controller->addCollisionObjectInNode(ent, Ogre::Bullet::CT_SPHERE);
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-    //    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
 
-    //    cout << fisic->getCollisionObjects().size() << endl << endl;
-
-    //    btVector3 body0 = fisic->getWorld()->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin();
-    //    btVector3 body1 = playerBody->getWorldTransform().getOrigin();
-
-    //    cout << body0.x() << " " << body0.y() << " " << body0.z() << endl;
-    //    cout << body1.x() << " " << body1.y() << " " << body1.z() << endl;
 
 
     Ogre::RenderWindow* tela = ctx.getRenderWindow();
-    //Ogre::OverlaySystem* overlays = new Ogre::OverlaySystem();
-    //scnMgr->addRenderQueueListener(overlays);
+    scnMgr->addRenderQueueListener(ctx.getOverlaySystem());
+//    std::cout << "carregamento" << std::endl;
     OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", tela);
-    controlador->createButton(OgreBites::TrayLocation::TL_BOTTOM, "Butao", "butao");
-    controlador->showAll();
-
+    controlador->createButton(OgreBites::TrayLocation::TL_CENTER, "botao", "press");
+//    controlador->showCursor();
+    controlador->showTrays();
+//    ctx.addInputListener(controlador);
+    
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
 
     ctx.getRoot()->startRendering();
-
+    
     ctx.closeApp();
-    //! [main]
+//! [main]
 
     return 0;
 

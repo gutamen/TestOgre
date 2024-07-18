@@ -399,13 +399,14 @@ namespace MyEngine {
         }
 
         // Construtor Principal
-        Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
+        Controllers(OgreBites::ApplicationContext application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
             this->physicController = new Physics();
             this->inputController = new KeyHandler(scene);
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
             physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
             this->frameController = new Updater(inputController, playerInstance, physicController);
+            this->application = application;
 
             //        btRigidBody* teste = new btRigidBody(0.1, new btDefaultMotionState(), new btSphereShape(2));
             //        teste->getWorldTransform().setOrigin(Ogre::Bullet::convert(scene->getEntity("Suzanne")->getParentNode()->getPosition()));
@@ -447,6 +448,7 @@ namespace MyEngine {
         Updater* frameController;
         Physics* physicController;
         Player* playerInstance;
+        OgreBites::ApplicationContext application;
     };
 
 }
