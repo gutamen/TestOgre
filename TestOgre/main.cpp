@@ -104,27 +104,18 @@ int main(int argc, char* argv[])
     // register for input events
 
     MyEngine::Controllers* controller = new MyEngine::Controllers(ctx, scnMgr, camera, node, ent, true);
-    MyEngine::Physics* fisic = controller->getPhysicsController();
-    btRigidBody* playerBody = controller->getPlayerBody();
+//    MyEngine::Physics* fisic = controller->getPhysicsController();
+//    btRigidBody* playerBody = controller->getPlayerBody();
 
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
-
-
-
-    Ogre::RenderWindow* tela = ctx.getRenderWindow();
-    scnMgr->addRenderQueueListener(ctx.getOverlaySystem());
-//    std::cout << "carregamento" << std::endl;
-    OgreBites::TrayManager* controlador = new OgreBites::TrayManager("Controlador", tela);
-    controlador->createButton(OgreBites::TrayLocation::TL_CENTER, "botao", "press");
-//    controlador->showCursor();
-    controlador->showTrays();
-//    ctx.addInputListener(controlador);
-    
+        
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
 
     ctx.getRoot()->startRendering();
     
+    std::cout << "teste" << std::endl;
+
     ctx.closeApp();
 //! [main]
 

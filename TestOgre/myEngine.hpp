@@ -11,6 +11,7 @@
 #include <OgreBullet.h>
 #include <OgreEntity.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
+#include <OgreTrays.h>
 #include <algorithm>
 #include <iostream>
 #include <LinearMath/btTransform.h>
@@ -131,10 +132,13 @@ namespace MyEngine {
 
         }
 
-        KeyHandler(Ogre::SceneManager* sceneManager, Player* player) {
+        KeyHandler(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player) {
             this->sceneManager = sceneManager;
-            this->player = player;
-            this->playerCamera = player->getPlayerCamera();
+//            this->player = player;
+//            std::cout << player->getPlayerCamera() << std::endl << sceneManager->getCamera("Camera") << std::endl;
+//            this->playerCamera = player->getPlayerCamera();
+            this->playerCamera = sceneManager->getCamera("Camera");
+//           this->application = application;
         }
 
 
@@ -212,6 +216,7 @@ namespace MyEngine {
         bool gIsPressed = false;
         Ogre::SceneManager* sceneManager;
         Ogre::Camera* playerCamera;
+        OgreBites::ApplicationContext application;
 
     };
 
@@ -269,10 +274,11 @@ namespace MyEngine {
 
         }
 
-        Updater(KeyHandler* keyHandler, Player* player, Physics* physics) {
+        Updater(KeyHandler* keyHandler, Player* player, Physics* physics, OgreBites::TrayManager* trays) {
             this->player = player;
             this->keyHandler = keyHandler;
             this->physics = physics;
+            this->trays = trays;
             if (player->getPlayerFisicBody() != nullptr) {
                 this->playerBody = player->getPlayerFisicBody();
             }
@@ -352,6 +358,7 @@ namespace MyEngine {
         Player* player;
         Ogre::Real tick = 0;
         Ogre::Real tickSpeed = 1.0 / 60.0;
+        OgreBites::TrayManager* trays;
     };
 
     struct EntityCollisionListener
@@ -385,33 +392,23 @@ namespace MyEngine {
     class Controllers {
 
     public:
-        Controllers(Ogre::SceneManager* scene, Player* player) {
-            this->frameController = new Updater();
-            this->inputController = new KeyHandler(scene);
-            this->playerInstance = player;
-        }
-
-        Controllers(Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity) {
-            this->playerInstance = new Player(playerCamera, playerNode, playerEntity);
-            this->physicController = new Physics();
-            this->inputController = new KeyHandler(scene);
-            this->frameController = new Updater(inputController, playerInstance, physicController);
-        }
-
         // Construtor Principal
         Controllers(OgreBites::ApplicationContext application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
+            scene->addRenderQueueListener(application.getOverlaySystem());
+
             this->physicController = new Physics();
-            this->inputController = new KeyHandler(scene);
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
             physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
-            this->frameController = new Updater(inputController, playerInstance, physicController);
-            this->application = application;
+//            this->inputController = new KeyHandler(application, scene, this->playerInstance);    
+            this->inputController = new KeyHandler(scene);    
 
-            //        btRigidBody* teste = new btRigidBody(0.1, new btDefaultMotionState(), new btSphereShape(2));
-            //        teste->getWorldTransform().setOrigin(Ogre::Bullet::convert(scene->getEntity("Suzanne")->getParentNode()->getPosition()));
-            //        std::cout << Ogre::Bullet::convert(teste->getWorldTransform().getOrigin()) << std::endl;
-            //        this->physicController->getWorld()->addRigidBody(teste);
+            this->application = application;
+            this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
+            instaceTrays(); 
+
+            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
+
         }
 
 
@@ -449,6 +446,11 @@ namespace MyEngine {
         Physics* physicController;
         Player* playerInstance;
         OgreBites::ApplicationContext application;
+        OgreBites::TrayManager* trays;
+
+        void instaceTrays(){
+            this->trays->createButton(OgreBites::TrayLocation::TL_CENTER, "botao", "press");
+        }
     };
 
 }
