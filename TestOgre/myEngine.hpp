@@ -135,9 +135,7 @@ namespace MyEngine {
 
         KeyHandler() {};
 
-        ~KeyHandler() {};
-
-        void initializeAtributes(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player) {
+        KeyHandler(OgreBites::ApplicationContext* application, Ogre::SceneManager* sceneManager, Player* player) {
             //            this->sceneManager = sceneManager;
             //            this->player = player;
             //            this->playerCamera = player->getPlayerCamera();
@@ -145,6 +143,8 @@ namespace MyEngine {
             //            this->application = application;
             //            std::cout << "key" << std::endl;
         };
+
+        ~KeyHandler() {};
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
@@ -220,7 +220,7 @@ namespace MyEngine {
         bool gIsPressed = false;
         Ogre::SceneManager* sceneManager = nullptr;
         Ogre::Camera* playerCamera = nullptr;
-        OgreBites::ApplicationContext application;
+        OgreBites::ApplicationContext* application;
 
     };
 
@@ -397,18 +397,17 @@ namespace MyEngine {
 
     public:
         // Construtor Principal
-        Controllers(OgreBites::ApplicationContext application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
-//            scene->addRenderQueueListener(application.getOverlaySystem());
+        Controllers(OgreBites::ApplicationContext* application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
+            scene->addRenderQueueListener(application->getOverlaySystem());
 
             this->physicController = new Physics();
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
-//            physicController->getWorld()->setInternalTickCallback(localTick);
+            physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
 //            this->inputController = new KeyHandler(application);
-//            this->inputController = new KeyHandler();    
-//            this->inputController.initializeAtributes(application, scene, this->playerInstance);
+            this->inputController = new KeyHandler(application, scene, this->playerInstance);    
 
-//            this->application = application;
+            this->application = application;
 //            this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
 //            instaceTrays(); 
 
@@ -420,7 +419,7 @@ namespace MyEngine {
             return this->playerInstance;
         }    
 
-        KeyHandler getInputController() {
+        KeyHandler* getInputController() {
             return this->inputController;
         }
 
@@ -449,11 +448,11 @@ namespace MyEngine {
         }
 
     private:
-        KeyHandler inputController;
+        KeyHandler* inputController;
         Updater* frameController;
         Physics* physicController;
         Player* playerInstance;
-        OgreBites::ApplicationContext application;
+        OgreBites::ApplicationContext* application;
         OgreBites::TrayManager* trays;
 
         void instaceTrays(){
