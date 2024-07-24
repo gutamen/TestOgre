@@ -13,6 +13,7 @@
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
 #include <OgreTrays.h>
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <LinearMath/btTransform.h>
 #include <LinearMath/btVector3.h>
@@ -121,7 +122,7 @@ namespace MyEngine {
 
 
 
-    class KeyHandler : public OgreBites::InputListener {
+    struct KeyHandler : public OgreBites::InputListener {
 
     public:
         KeyHandler(Ogre::SceneManager* sceneManager)
@@ -132,8 +133,16 @@ namespace MyEngine {
 
         }
 
-        KeyHandler(OgreBites::ApplicationContext application);
+        KeyHandler(){}
 
+        void initializeAtributes(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player){
+//            this->sceneManager = sceneManager;
+//            this->player = player;
+//            this->playerCamera = player->getPlayerCamera();
+//            this->playerCamera = sceneManager->getCamera("Camera");
+//            this->application = application;
+            std::cout << "key" << std::endl;
+        }
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
@@ -203,12 +212,12 @@ namespace MyEngine {
 //        Ogre::Node* playerNode;
         Ogre::Real MoveSpeed = 1;
         Ogre::Real timer = 0;
-        Player* player;
+        Player* player = nullptr;
         bool sIsPressed = false;
         bool wIsPressed = false;
         bool gIsPressed = false;
-        Ogre::SceneManager* sceneManager;
-        Ogre::Camera* playerCamera;
+        Ogre::SceneManager* sceneManager = nullptr;
+        Ogre::Camera* playerCamera = nullptr;
         OgreBites::ApplicationContext application;
 
     };
@@ -387,25 +396,29 @@ namespace MyEngine {
     public:
         // Construtor Principal
         Controllers(OgreBites::ApplicationContext application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
-            scene->addRenderQueueListener(application.getOverlaySystem());
+//            scene->addRenderQueueListener(application.getOverlaySystem());
 
             this->physicController = new Physics();
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
-            physicController->getWorld()->setInternalTickCallback(localTick);
+//            physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
-            this->inputController = new KeyHandler(application);
-//            this->inputController = new KeyHandler(scene);    
+//            this->inputController = new KeyHandler(application);
+//            this->inputController = new KeyHandler();    
+//            this->inputController.initializeAtributes(application, scene, this->playerInstance);
 
-            this->application = application;
-            this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
-            instaceTrays(); 
+//            this->application = application;
+//            this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
+//            instaceTrays(); 
 
-            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
+//            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
 
         }
 
+        Player* getPlayer(){
+            return this->playerInstance;
+        }    
 
-        KeyHandler* getInputController() {
+        KeyHandler getInputController() {
             return this->inputController;
         }
 
@@ -434,7 +447,7 @@ namespace MyEngine {
         }
 
     private:
-        KeyHandler* inputController;
+        KeyHandler inputController;
         Updater* frameController;
         Physics* physicController;
         Player* playerInstance;

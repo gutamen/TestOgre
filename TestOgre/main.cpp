@@ -102,19 +102,19 @@ int main(int argc, char* argv[])
 
 //! [main]
     // register for input events
-
     MyEngine::Controllers* controller = new MyEngine::Controllers(ctx, scnMgr, camera, node, ent, true);
+//    std::cout << "out control" << std::endl;
 //    MyEngine::Physics* fisic = controller->getPhysicsController();
 //    btRigidBody* playerBody = controller->getPlayerBody();
-
-    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
+    MyEngine::KeyHandler* teste = new MyEngine::KeyHandler();
+    teste->initializeAtributes(ctx, scnMgr, controller->getPlayer());
+//    controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
         
-    root->addFrameListener(controller->getFrameController());
-    ctx.addInputListener(controller->getInputController());
+//    root->addFrameListener(controller->getFrameController());
+//    ctx.addInputListener(controller->getInputController());
 
     ctx.getRoot()->startRendering();
     
-    std::cout << "teste" << std::endl;
 
     ctx.closeApp();
 //! [main]
