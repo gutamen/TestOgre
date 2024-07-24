@@ -9,5 +9,14 @@ namespace MyEngine {
         return object;
     }
 
+    KeyHandler::KeyHandler(OgreBites::ApplicationContext application){
+//        this->sceneManager = sceneManager;
+        //            this->player = player;
+        //            std::cout << player->getPlayerCamera() << std::endl << sceneManager->getCamera("Camera") << std::endl;
+        //            this->playerCamera = player->getPlayerCamera();
+//        this->playerCamera = sceneManager->getCamera("Camera");
+        //           this->application = application;
+    }
+
 }
 // namespace MyEngine

@@ -132,14 +132,7 @@ namespace MyEngine {
 
         }
 
-        KeyHandler(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player) {
-            this->sceneManager = sceneManager;
-//            this->player = player;
-//            std::cout << player->getPlayerCamera() << std::endl << sceneManager->getCamera("Camera") << std::endl;
-//            this->playerCamera = player->getPlayerCamera();
-            this->playerCamera = sceneManager->getCamera("Camera");
-//           this->application = application;
-        }
+        KeyHandler(OgreBites::ApplicationContext application);
 
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
@@ -207,8 +200,8 @@ namespace MyEngine {
         }
 
     private:
-        Ogre::Node* playerNode;
-        Ogre::Real MoveSpeed;
+//        Ogre::Node* playerNode;
+        Ogre::Real MoveSpeed = 1;
         Ogre::Real timer = 0;
         Player* player;
         bool sIsPressed = false;
@@ -400,8 +393,8 @@ namespace MyEngine {
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
             physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
-//            this->inputController = new KeyHandler(application, scene, this->playerInstance);    
-            this->inputController = new KeyHandler(scene);    
+            this->inputController = new KeyHandler(application);
+//            this->inputController = new KeyHandler(scene);    
 
             this->application = application;
             this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
