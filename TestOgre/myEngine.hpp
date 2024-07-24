@@ -131,18 +131,20 @@ namespace MyEngine {
             this->sceneManager = sceneManager;
             this->playerCamera = sceneManager->getCamera("Camera");
 
-        }
+        };
 
-        KeyHandler(){}
+        KeyHandler() {};
 
-        void initializeAtributes(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player){
-//            this->sceneManager = sceneManager;
-//            this->player = player;
-//            this->playerCamera = player->getPlayerCamera();
-//            this->playerCamera = sceneManager->getCamera("Camera");
-//            this->application = application;
-            std::cout << "key" << std::endl;
-        }
+        ~KeyHandler() {};
+
+        void initializeAtributes(OgreBites::ApplicationContext application, Ogre::SceneManager* sceneManager, Player* player) {
+            //            this->sceneManager = sceneManager;
+            //            this->player = player;
+            //            this->playerCamera = player->getPlayerCamera();
+            //            this->playerCamera = sceneManager->getCamera("Camera");
+            //            this->application = application;
+            //            std::cout << "key" << std::endl;
+        };
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
