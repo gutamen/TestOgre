@@ -347,6 +347,8 @@ namespace MyEngine {
                 //            std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl;
                 //            std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl;
                 tick = 0;
+                trays->refreshCursor();
+
             }
             return true;
         }
