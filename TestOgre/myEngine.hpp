@@ -131,20 +131,17 @@ namespace MyEngine {
             this->sceneManager = sceneManager;
             this->playerCamera = sceneManager->getCamera("Camera");
 
-        };
-
-        KeyHandler() {};
+        }
 
         KeyHandler(OgreBites::ApplicationContext* application, Ogre::SceneManager* sceneManager, Player* player) {
-            //            this->sceneManager = sceneManager;
-            //            this->player = player;
-            //            this->playerCamera = player->getPlayerCamera();
-            //            this->playerCamera = sceneManager->getCamera("Camera");
-            //            this->application = application;
-            //            std::cout << "key" << std::endl;
-        };
+            this->sceneManager = sceneManager;
+            this->player = player;
+            this->playerCamera = player->getPlayerCamera();
+//            this->playerCamera = sceneManager->getCamera("Camera");
+            this->application = application;
+        }
 
-        ~KeyHandler() {};
+        ~KeyHandler() {}
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
@@ -408,10 +405,10 @@ namespace MyEngine {
             this->inputController = new KeyHandler(application, scene, this->playerInstance);    
 
             this->application = application;
-//            this->trays = new OgreBites::TrayManager("Tray Controller", this->application.getRenderWindow());
-//            instaceTrays(); 
+            this->trays = new OgreBites::TrayManager("Tray Controller", this->application->getRenderWindow());
+            instaceTrays(); 
 
-//            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
+            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
 
         }
 
