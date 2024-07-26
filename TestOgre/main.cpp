@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
     ctx.initApp();
     ctx.loadResources();
 //! [constructor]
-
+    
 //! [setup]
         // get a pointer to the already created root
     Ogre::Root* root = ctx.getRoot();
@@ -110,6 +110,7 @@ int main(int argc, char* argv[])
         
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
+
 
     ctx.getRoot()->startRendering();
     
