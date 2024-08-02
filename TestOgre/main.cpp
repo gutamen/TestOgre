@@ -111,7 +111,8 @@ int main(int argc, char* argv[])
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
 
-
+//    ctx.setup();
+    ctx.setWindowGrab();
     ctx.getRoot()->startRendering();
     
 
