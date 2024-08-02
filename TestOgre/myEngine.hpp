@@ -315,37 +315,11 @@ namespace MyEngine {
                     }
                 }
                 if (keyHandler->pressedG()) {
-                    //                btVector3 body0 = playerBody->getWorldTransform().getOrigin();
-                    //                std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl; 
-                    std::cout << playerDirectionTester->getDistanceInDirection() << std::endl;
-                    //                std::cout << playerBody->getUserPointer() << std::endl;
-                    //                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl << std::endl;
-
-                    //                btVector3 body1 = physics->getCollisionObjects().at(1)->getWorldTransform().getOrigin();
-                    //                std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl; 
-                    //                std::cout << player->getPlayerEntity()->getBoundingRadius() << std::endl << player->getPlayerEntity()->getParentSceneNode()->getScale() << std::endl << std::endl;
-
-                    //                std::cout << player->getPlayerNode()->getPosition().x << " " << player->getPlayerNode()->getPosition().y << " " << player->getPlayerNode()->getPosition().z << std::endl << std::endl;
-
-
-                    //                std::cout << physics->getCollisionObjects().at(0)->getUserPointer() << std::endl;
-                    //                std::cout << player->getPlayerFisicBody()->getUserPointer() << std::endl << std::endl;
-
-                    //                std::cout << physics->getCollisionObjects().at(0) << std::endl;
-                    //                std::cout << player->getPlayerFisicBody() << std::endl << std::endl;
-
-                    //                std::cout << physics << std::endl << std::endl;
+//                    std::cout << playerDirectionTester->getDistanceInDirection() << std::endl;
 
                 }
 
                 physics->getWorld()->stepSimulation(0.166);
-                //            physics->getWorld()->performDiscreteCollisionDetection();
-                //            std::cout << physics->getWorld()->getDispatcher()->getNumManifolds() << std::endl;
-                //            btVector3 body0 = physics->getWorld()->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-                //            btVector3 body1 = playerBody->getWorldTransform().getOrigin();
-
-                //            std::cout << body0.x() << " " << body0.y() << " " << body0.z() << std::endl;
-                //            std::cout << body1.x() << " " << body1.y() << " " << body1.z() << std::endl << std::endl;
                 tick = 0;
                 trays->refreshCursor();
 
