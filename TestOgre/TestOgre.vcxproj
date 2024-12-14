@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\ogre\Components\Overlay\include;G:\ogre\Components\Bullet\include;G:\ogre\out\include;G:\ogre\Components\RTShaderSystem\include;G:\ogre\Components\Bites\include;G:\ogre\OgreMain\include;G:\ogre\out\Dependencies\include\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>L:\ogre\Components\Overlay\include;L:\ogre\Components\Bullet\include;L:\ogre\out\build\include;L:\ogre\Components\RTShaderSystem\include;L:\ogre\Components\Bites\include;L:\ogre\OgreMain\include;L:\ogre\out\build\Dependencies\include\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -127,7 +127,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>G:\ogre\out\bullet3-3.25\lib\RelWithDebInfo;G:\ogre\out\lib\MinSizeRel;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>L:\ogre\out\build\bullet3-3.25\lib\RelWithDebInfo;L:\ogre\out\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OgreMain.lib;OgreBites.lib;OgreRTShaderSystem.lib;OgreBullet.lib;Bullet3Common.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
