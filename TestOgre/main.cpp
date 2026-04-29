@@ -19,6 +19,8 @@
 #include <OgreTrays.h>
 #include <OgreBullet.h>
 #include "myEngine.hpp"
+#include "OgreTerrain.h"
+#include "OgreTerrainGroup.h"
 
 using namespace std;
 
@@ -31,16 +33,22 @@ int main(int argc, char* argv[])
     ctx.initApp();
     ctx.loadResources();
 //! [constructor]
-    
+
 //! [setup]
-        // get a pointer to the already created root
+    // get a pointer to the already created root
+    
+    // Teste terreno
+    Ogre::TerrainGlobalOptions* mTerrainGlobals = nullptr;
+    Ogre::TerrainGroup* mTerrainGroup = nullptr;
+    bool mTerrainsImported = false;
+
     Ogre::Root* root = ctx.getRoot();
     Ogre::SceneManager* scnMgr = root->createSceneManager();
 
     // register our scene with the RTSS
     Ogre::RTShader::ShaderGenerator* shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
     shadergen->addSceneManager(scnMgr);
-
+  
 
     Ogre::SceneNode* attachmentNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     attachmentNode->loadChildren("untitled.scene");

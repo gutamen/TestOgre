@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>L:\ogre\Components\Overlay\include;L:\ogre\Components\Bullet\include;L:\ogre\out\build\include;L:\ogre\Components\RTShaderSystem\include;L:\ogre\Components\Bites\include;L:\ogre\OgreMain\include;L:\ogre\out\build\Dependencies\include\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\ogre-14.4.1\Components\Overlay\include;C:\dev\ogre-14.4.1\Components\Bullet\include;C:\dev\ogreBuild\include;C:\dev\ogre-14.4.1\Components\RTShaderSystem\include;C:\dev\ogre-14.4.1\Components\Bites\include;C:\dev\ogreBuild\Dependencies\include\bullet;C:\dev\ogre-14.4.1\OgreMain\include;C:\dev\ogre-14.4.1\Components\Terrain\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -127,7 +127,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>L:\ogre\out\build\bullet3-3.25\lib\RelWithDebInfo;L:\ogre\out\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\ogreBuild\bullet3-3.25\lib\RelWithDebInfo;C:\dev\ogreBuild\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OgreMain.lib;OgreBites.lib;OgreRTShaderSystem.lib;OgreBullet.lib;Bullet3Common.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

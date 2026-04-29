@@ -70,6 +70,7 @@ namespace MyEngine {
 
     };
 
+    // Faz referência ao jogador, contém o nodo, a entidade e camera para o jogador
     class Player {
     public:
         Player(Ogre::Camera* camera, Ogre::SceneNode* node, Ogre::Entity* entity) {
@@ -78,6 +79,7 @@ namespace MyEngine {
             this->playerEntity = entity;
         };
 
+        // Construtor principal, define os principais objetos do jogador
         Player(Ogre::Camera* camera, Ogre::SceneNode* node, Ogre::Entity* entity, btRigidBody* fisicBody) {
             this->playerCamera = camera;
             this->playerNode = node;
@@ -123,7 +125,7 @@ namespace MyEngine {
 
 
 
-
+    // Gerenciador de entradas
     struct KeyHandler : public OgreBites::InputListener {
 
     public:
@@ -203,6 +205,7 @@ namespace MyEngine {
             return true;
         }
 
+        // Movimentação do mouse
         bool mouseMoved(const OgreBites::MouseMotionEvent& evt) override {
             if(!pressedAlt()){
                 this->playerCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
@@ -255,7 +258,7 @@ namespace MyEngine {
 
     };
 
-
+    // Classe usa a biblioteca Bullet para gerenciar física
     class Physics {
 
     private:
@@ -302,7 +305,7 @@ namespace MyEngine {
 
     };
 
-
+    // Monitorador da geração de quadros, principal local de controle
     class Updater : public Ogre::FrameListener {
     public:
         Updater() {
@@ -400,6 +403,7 @@ namespace MyEngine {
         }
     }
 
+    // União entre os objetos de classes principais
     class Controllers {
 
     public:
