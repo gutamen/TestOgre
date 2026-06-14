@@ -115,12 +115,13 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\ogre-14.4.1\Components\Overlay\include;C:\dev\ogre-14.4.1\Components\Bullet\include;C:\dev\ogreBuild\include;C:\dev\ogre-14.4.1\Components\RTShaderSystem\include;C:\dev\ogre-14.4.1\Components\Bites\include;C:\dev\ogreBuild\Dependencies\include\bullet;C:\dev\ogre-14.4.1\OgreMain\include;C:\dev\ogre-14.4.1\Components\Terrain\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\ogre-14.4.1\Components\Overlay\include;C:\dev\ogre-14.4.1\Components\Bullet\include;C:\dev\ogreBuild\include;C:\dev\ogre-14.4.1\Components\RTShaderSystem\include;C:\dev\ogre-14.4.1\Components\Bites\include;C:\dev\ogreBuild\Dependencies\include\bullet;C:\dev\ogre-14.4.1\OgreMain\include;C:\dev\ogre-14.4.1\Components\Terrain\include;C:\dev\ogre-14.4.1\Components\Paging\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +129,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\ogreBuild\bullet3-3.25\lib\RelWithDebInfo;C:\dev\ogreBuild\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;OgreBites.lib;OgreRTShaderSystem.lib;OgreBullet.lib;Bullet3Common.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain.lib;OgreBites.lib;OgreRTShaderSystem.lib;OgreBullet.lib;Bullet3Common.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;OgreTerrain.lib;OgrePaging.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
