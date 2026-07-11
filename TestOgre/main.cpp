@@ -22,17 +22,6 @@
 
 using namespace std;
 
-class DummyPageProvider : public Ogre::PageProvider
-{
-public:
-    bool prepareProceduralPage(Ogre::Page* page, Ogre::PagedWorldSection* section) { return true; }
-    bool loadProceduralPage(Ogre::Page* page, Ogre::PagedWorldSection* section) { return true; }
-    bool unloadProceduralPage(Ogre::Page* page, Ogre::PagedWorldSection* section) { return true; }
-    bool unprepareProceduralPage(Ogre::Page* page, Ogre::PagedWorldSection* section) { return true; }
-};
-DummyPageProvider mDummyPageProvider;
-
-
 int main(int argc, char* argv[])
 {
 
@@ -48,9 +37,16 @@ int main(int argc, char* argv[])
     
     // Objetos de Terreno
     Ogre::TerrainGlobalOptions* terrainGlobals = nullptr;
-    Ogre::PageManager* pageManager;
     Ogre::TerrainGroup* principalTerrainGroup = nullptr;
     Ogre::TerrainPaging* terrainPaging = nullptr;
+
+    // === DEBUG: Liste todos os recursos encontrados ===
+    /*std::cout << "\n=== RECURSOS ENCONTRADOS ===\n";
+    Ogre::FileInfoListPtr files = Ogre::ResourceGroupManager::getSingleton().listResourceFileInfo("General", false);
+    for (auto& f : *files) {
+        std::cout << "   " << f.filename << " (" << f.path << ")\n";
+    }
+    std::cout << "==========================\n\n";*/
 
     Ogre::Root* root = ctx.getRoot();
     Ogre::SceneManager* scnMgr = root->createSceneManager();
@@ -68,7 +64,7 @@ int main(int argc, char* argv[])
     // Início do terreno
     terrainGlobals = new Ogre::TerrainGlobalOptions();
     terrainGlobals->setMaxPixelError(8);
-    terrainGlobals->setCompositeMapSize(3000);
+    terrainGlobals->setCompositeMapSize(5000);
 
     principalTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         scnMgr,                     // SceneManager
@@ -76,7 +72,7 @@ int main(int argc, char* argv[])
         513,                        // Quantos pontos tem em cada lado (513 é comum)
         12000.0f                     // Tamanho em metros no mundo
     );
-    principalTerrainGroup->setOrigin(Ogre::Vector3(0, 0, 0));  
+    principalTerrainGroup->setOrigin(Ogre::Vector3(0.0, -10.0, 0.0));  
 
     // Heightmap do terreno
     Ogre::Image heightMap;
@@ -90,7 +86,7 @@ int main(int argc, char* argv[])
     
 
     Ogre::Terrain::ImportData& importSettings = principalTerrainGroup->getDefaultImportSettings();
-    importSettings.inputScale = 600.0f;     // força da altura
+    importSettings.inputScale = 800.0f;     // força da altura
     importSettings.minBatchSize = 33;
     importSettings.maxBatchSize = 65;
 
@@ -98,51 +94,47 @@ int main(int argc, char* argv[])
     importSettings.layerList.resize(1);        // 1 camada
 
     // Camada 0 (base)
-    importSettings.layerList[0].worldSize = 200.0f;  // quanto a textura se repete no mundo
+    importSettings.layerList[0].worldSize = 10.0f;  // quanto a textura se repete no mundo
 
     // Textura difusa + especular
-    importSettings.layerList[0].textureNames.push_back("test_diffspec.dds");
+    importSettings.layerList[0].textureNames.push_back("grassdifusse.png");
 
     // Textura Normal + Height (MUITO IMPORTANTE!)
-    importSettings.layerList[0].textureNames.push_back("test_normheight.dds");
-
-    //! [light]
-    Ogre::Light* l = scnMgr->createLight();
-    l->setType(Ogre::Light::LT_DIRECTIONAL);
-    l->setDiffuseColour(Ogre::ColourValue::White);
-    l->setSpecularColour(Ogre::ColourValue(0.6, 0.6, 0.6));
-
-    Ogre::SceneNode* ln = scnMgr->getRootSceneNode()->createChildSceneNode();
-    ln->setDirection(Ogre::Vector3(0.55, -0.3, 0.75).normalisedCopy());
-    ln->setPosition(10.0, 3, 0);
-    ln->attachObject(l);
-    //! [light]
-    scnMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
-    principalTerrainGroup->defineTerrain(0, 0, &heightMap);
-    pageManager = OGRE_NEW Ogre::PageManager();
-
+    importSettings.layerList[0].textureNames.push_back("NormalMapGrass.png");
     
+    //! [light]
+    Ogre::Light* sunLight = scnMgr->createLight("SunLight");
+    sunLight->setType(Ogre::Light::LT_DIRECTIONAL);
+    Ogre::SceneNode* sunLightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    sunLight->setType(Ogre::Light::LT_DIRECTIONAL);
+    sunLightNode->setDirection(Ogre::Vector3(-0.7f, -1.0f, -0.5f).normalisedCopy()); // direção do sol
+    sunLightNode->attachObject(sunLight);
+    sunLight->setDiffuseColour(Ogre::ColourValue(1.0f, 0.95f, 0.8f));   // cor quente
+    sunLight->setSpecularColour(Ogre::ColourValue(0.8f, 0.8f, 0.7f));
+
+    scnMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
+    //! [light]
+    
+    principalTerrainGroup->defineTerrain(0, 0, &heightMap);
+
+    // Important to set these so that the terrain knows what to use for baked (non-realtime) data
+    terrainGlobals->setLightMapDirection(sunLight->getDerivedDirection());
+    terrainGlobals->setCompositeMapAmbient(scnMgr->getAmbientLight());
+    terrainGlobals->setCompositeMapDiffuse(sunLight->getDiffuseColour());
 
     Ogre::SceneManager::CameraList cameras = scnMgr->getCameras();
     Ogre::Camera* camera = cameras.at("Camera");
     camera->setAutoAspectRatio(true);
     
-    // Paginação
-    pageManager->setPageProvider(&mDummyPageProvider);
-    pageManager->addCamera(camera);
-    terrainPaging = OGRE_NEW Ogre::TerrainPaging(pageManager);
-    Ogre::PagedWorld* world = pageManager->createWorld();
-    terrainPaging->createWorldSection(world, principalTerrainGroup, 2000, 3000, 0, 0, 0, 0);
-
+    
     // Carregar o terreno
     principalTerrainGroup->loadAllTerrains(true);   // true = síncrono (espera carregar)
     //principalTerrainGroup->freeTemporaryResources();
-
+    
     //cout << camera->getName();
 
     //scnMgr->getEntity("Suzanne")->getParentNode()->setPosition(1, 1, 1);
 
-    
 
     //ctx.getRenderWindow()->addViewport(camera);
 
@@ -164,7 +156,7 @@ int main(int argc, char* argv[])
     //cout << camera->getParentNode()->getOrientation() << endl;
 
     //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
-
+    
     ctx.getRenderWindow()->addViewport(camera);
 
     // finally something to render
@@ -189,10 +181,26 @@ int main(int argc, char* argv[])
     root->addFrameListener(controller->getFrameController());
     ctx.addInputListener(controller->getInputController());
 
-//    ctx.setup();
     ctx.setWindowGrab();
     ctx.getRoot()->startRendering();
     
+
+
+    // Fechamento de programa
+    if (principalTerrainGroup)
+    {
+        
+        principalTerrainGroup->freeTemporaryResources();
+
+        // Opcional: deleta o grupo
+        OGRE_DELETE principalTerrainGroup;
+        principalTerrainGroup = nullptr;
+    }
+
+    if (terrainGlobals)
+    {
+        OGRE_DELETE terrainGlobals;
+    }
 
     ctx.closeApp();
 //! [main]

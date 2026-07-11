@@ -5,7 +5,7 @@
 <scene author="gutam" formatVersion="1.1" >
   <nodes >
     <node name="Camera" >
-      <position x="7.358891" y="50.958309" z="6.925791" />
+      <position x="7.358891" y="10.958309" z="6.925791" />
       <rotation qw="0.928477" qx="0.000000" qy="0.371391" qz="-0.000000" />
       <scale x="1.000000" y="1.000000" z="1.000000" />
       <camera fov="0.356186" name="Camera" projectionType="perspective" >
