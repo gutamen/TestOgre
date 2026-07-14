@@ -138,8 +138,12 @@
     <ClCompile Include="Updater.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Controllers.hpp" />
     <ClInclude Include="KeyHandler.hpp" />
+    <ClInclude Include="myEngine.hpp">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Player.hpp" />
   </ItemGroup>
