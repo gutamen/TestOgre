@@ -24,8 +24,8 @@
 #include <memory>
 #include <OgreTerrainGroup.h>
 
-#ifndef ENGINE_DEFINITION
-#define ENGINE_DEFINITION
+#ifndef MYENGINE_H
+#define MYENGINE_H
 
 namespace MyEngine {
 

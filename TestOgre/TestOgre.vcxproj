@@ -135,17 +135,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myEngine.cpp" />
-    <ClCompile Include="Updater.hpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Controllers.hpp" />
-    <ClInclude Include="KeyHandler.hpp" />
-    <ClInclude Include="myEngine.hpp">
+    <ClInclude Include="myEngine.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
-    <ClInclude Include="Physics.hpp" />
-    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

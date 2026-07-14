@@ -17,7 +17,7 @@
 #include "OgreSceneManager.h"
 #include <OgreTrays.h>
 #include <OgreBullet.h>
-#include "myEngine.hpp"
+#include "myEngine.h"
 #include "OgreTerrainMaterialGeneratorA.h"
 
 using namespace std;
