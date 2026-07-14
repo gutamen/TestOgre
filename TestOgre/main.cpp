@@ -18,7 +18,7 @@
 #include <OgreTrays.h>
 #include <OgreBullet.h>
 #include "myEngine.hpp"
-
+#include "OgreTerrainMaterialGeneratorA.h"
 
 using namespace std;
 
@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
 
     // register our scene with the RTSS
     Ogre::RTShader::ShaderGenerator* shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+    scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
     shadergen->addSceneManager(scnMgr);
     
 
@@ -64,7 +65,7 @@ int main(int argc, char* argv[])
     // Início do terreno
     terrainGlobals = new Ogre::TerrainGlobalOptions();
     terrainGlobals->setMaxPixelError(8);
-    terrainGlobals->setCompositeMapSize(5000);
+    terrainGlobals->setCompositeMapSize(6000);
 
     principalTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         scnMgr,                     // SceneManager
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
         513,                        // Quantos pontos tem em cada lado (513 é comum)
         12000.0f                     // Tamanho em metros no mundo
     );
-    principalTerrainGroup->setOrigin(Ogre::Vector3(0.0, -10.0, 0.0));  
+    principalTerrainGroup->setOrigin(Ogre::Vector3(0.0, -500.0, 0.0));  
 
     // Heightmap do terreno
     Ogre::Image heightMap;
@@ -83,6 +84,30 @@ int main(int argc, char* argv[])
     catch (Ogre::Exception& e) {
         std::cout << "[ERRO] Falha ao carregar terrain.png: " << e.getFullDescription() << std::endl;
     }
+
+    //! [linearFog]
+    Ogre::ColourValue fadeColour(0.7, 0.7, 0.8);
+    scnMgr->setFog(Ogre::FOG_LINEAR, fadeColour, 0, 2000, 10000);
+    //! [linearFog]
+    
+    //! [light]
+    Ogre::Light* sunLight = scnMgr->createLight("SunLight");
+    sunLight->setType(Ogre::Light::LT_DIRECTIONAL);
+    sunLight->setDiffuseColour(Ogre::ColourValue::White);   
+    sunLight->setSpecularColour(Ogre::ColourValue(0.4f, 0.4f, 0.4f));
+
+    Ogre::SceneNode* sunLightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    sunLightNode->setDirection(Ogre::Vector3(0.55, -0.3, 0.75).normalisedCopy());       // direção do sol
+    sunLightNode->attachObject(sunLight);
+    
+    scnMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
+    //! [light]
+    
+    
+    // Important to set these so that the terrain knows what to use for baked (non-realtime) data
+    terrainGlobals->setLightMapDirection(sunLight->getDerivedDirection());
+    terrainGlobals->setCompositeMapAmbient(scnMgr->getAmbientLight());
+    terrainGlobals->setCompositeMapDiffuse(sunLight->getDiffuseColour());
     
 
     Ogre::Terrain::ImportData& importSettings = principalTerrainGroup->getDefaultImportSettings();
@@ -94,49 +119,24 @@ int main(int argc, char* argv[])
     importSettings.layerList.resize(1);        // 1 camada
 
     // Camada 0 (base)
-    importSettings.layerList[0].worldSize = 10.0f;  // quanto a textura se repete no mundo
+    importSettings.layerList[0].worldSize = 150.0f;  // quanto a textura se repete no mundo
 
     // Textura difusa + especular
-    importSettings.layerList[0].textureNames.push_back("grassdifusse.png");
+    importSettings.layerList[0].textureNames.push_back("Ground37_diffspec.dds");
 
     // Textura Normal + Height (MUITO IMPORTANTE!)
-    importSettings.layerList[0].textureNames.push_back("NormalMapGrass.png");
-    
-    //! [light]
-    Ogre::Light* sunLight = scnMgr->createLight("SunLight");
-    sunLight->setType(Ogre::Light::LT_DIRECTIONAL);
-    Ogre::SceneNode* sunLightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    sunLight->setType(Ogre::Light::LT_DIRECTIONAL);
-    sunLightNode->setDirection(Ogre::Vector3(-0.7f, -1.0f, -0.5f).normalisedCopy()); // direção do sol
-    sunLightNode->attachObject(sunLight);
-    sunLight->setDiffuseColour(Ogre::ColourValue(1.0f, 0.95f, 0.8f));   // cor quente
-    sunLight->setSpecularColour(Ogre::ColourValue(0.8f, 0.8f, 0.7f));
-
-    scnMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
-    //! [light]
-    
-    principalTerrainGroup->defineTerrain(0, 0, &heightMap);
-
-    // Important to set these so that the terrain knows what to use for baked (non-realtime) data
-    terrainGlobals->setLightMapDirection(sunLight->getDerivedDirection());
-    terrainGlobals->setCompositeMapAmbient(scnMgr->getAmbientLight());
-    terrainGlobals->setCompositeMapDiffuse(sunLight->getDiffuseColour());
-
-    Ogre::SceneManager::CameraList cameras = scnMgr->getCameras();
-    Ogre::Camera* camera = cameras.at("Camera");
-    camera->setAutoAspectRatio(true);
-    
+    importSettings.layerList[0].textureNames.push_back("Ground37_normheight.dds");
     
     // Carregar o terreno
+    principalTerrainGroup->defineTerrain(0, 0, &heightMap);
     principalTerrainGroup->loadAllTerrains(true);   // true = síncrono (espera carregar)
     //principalTerrainGroup->freeTemporaryResources();
     
-    //cout << camera->getName();
-
-    //scnMgr->getEntity("Suzanne")->getParentNode()->setPosition(1, 1, 1);
-
-
-    //ctx.getRenderWindow()->addViewport(camera);
+    
+    // [camera]
+    Ogre::SceneManager::CameraList cameras = scnMgr->getCameras();
+    Ogre::Camera* camera = cameras.at("Camera");
+    camera->setAutoAspectRatio(true);
 
     // also need to tell where we are
     //Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -158,7 +158,8 @@ int main(int argc, char* argv[])
     //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
     
     ctx.getRenderWindow()->addViewport(camera);
-
+    //! [camera]
+    
     // finally something to render
     Ogre::Entity* ent = scnMgr->createEntity("player", "Suzanne.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode(camera->getDerivedPosition());

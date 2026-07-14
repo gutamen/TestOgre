@@ -129,21 +129,7 @@ namespace MyEngine {
     struct KeyHandler : public OgreBites::InputListener {
 
     public:
-        KeyHandler(Ogre::SceneManager* sceneManager)
-        {
-            // Obtém o SceneManager associado à janela de renderização
-            this->sceneManager = sceneManager;
-            this->playerCamera = sceneManager->getCamera("Camera");
-
-        }
-
-        KeyHandler(OgreBites::ApplicationContext* application, Ogre::SceneManager* sceneManager, Player* player, OgreBites::TrayManager* trays) {
-            this->sceneManager = sceneManager;
-            this->player = player;
-            this->playerCamera = player->getPlayerCamera();
-            this->application = application;
-            this->trays = trays;
-        }
+        KeyHandler(){}
 
         ~KeyHandler() {}
 
@@ -164,7 +150,7 @@ namespace MyEngine {
             // Alt solto
             case 1073742050:
                 altIsPressed = false;
-                this->trays->hideCursor();
+                
                 break;
 
             }
@@ -175,7 +161,7 @@ namespace MyEngine {
         bool keyPressed(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
             case 100:
-                sceneManager->getEntity("Suzanne")->getParentNode()->translate(Ogre::Vector3(0, 1, 0));
+                
                 break;
 
             case 103:
@@ -193,37 +179,28 @@ namespace MyEngine {
             // Alt pressionado
             case 1073742050:    
                 altIsPressed = true;
-                this->trays->showCursor();
                 break;
             }
 
             if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
             {
-
                 Ogre::Root::getSingleton().queueEndRendering();
             }
             return true;
         }
 
-        // Movimentação do mouse
         bool mouseMoved(const OgreBites::MouseMotionEvent& evt) override {
-            if(!pressedAlt()){
-                this->playerCamera->getParentNode()->yaw(Ogre::Radian(-evt.xrel * 0.005), Ogre::Node::TS_WORLD);
-                this->playerCamera->getParentNode()->pitch(Ogre::Radian(-evt.yrel * 0.005));
-            }else{
-                OgreBites::MouseMotionEvent* cursorMovement = new OgreBites::MouseMotionEvent();
-                cursorMovement->x = this->mouseX;
-                cursorMovement->y = this->mouseY;
-                cursorMovement->xrel = evt.xrel;
-                cursorMovement->yrel = evt.yrel;
-                cursorMovement->type = evt.type;
-                cursorMovement->windowID = evt.windowID;
-                this->trays->mouseMoved(*cursorMovement);
-                this->mouseX += evt.xrel;
-                this->mouseY += evt.yrel;
-                delete cursorMovement;
-            }
+            this->mouseMovement.x += -evt.xrel;
+            this->mouseMovement.y += -evt.yrel;
             return true;
+        }
+
+        Ogre::Vector2 mouseMovementRel() {
+            return this->mouseMovement;
+        }
+
+        void mouseMovementReset() {
+            this->mouseMovement = Ogre::Vector2::ZERO;
         }
 
         bool pressedW() {
@@ -243,19 +220,12 @@ namespace MyEngine {
         }
 
     private:
-        Ogre::Real MoveSpeed = 1;
-        Ogre::Real timer = 0;
-        Player* player = nullptr;
+        Ogre::Vector2 mouseMovement = Ogre::Vector2::ZERO;
+        Ogre::Vector2 cursorPosition = Ogre::Vector2::ZERO;
         bool sIsPressed = false;
         bool wIsPressed = false;
         bool gIsPressed = false;
         bool altIsPressed = false;
-        int mouseX = 0, mouseY = 0;
-        Ogre::SceneManager* sceneManager = nullptr;
-        Ogre::Camera* playerCamera = nullptr;
-        OgreBites::ApplicationContext* application;
-        OgreBites::TrayManager* trays;
-
     };
 
     // Classe usa a biblioteca Bullet para gerenciar física
@@ -351,9 +321,38 @@ namespace MyEngine {
                         }
                     }
                 }
+
                 if (keyHandler->pressedG()) {
 //                    std::cout << playerDirectionTester->getDistanceInDirection() << std::endl;
 
+                }
+
+                if (!keyHandler->pressedAlt()) {
+                    Ogre::Vector2 mouseMovement = this->keyHandler->mouseMovementRel();
+                    this->player->getPlayerCamera()->getParentNode()->yaw(Ogre::Radian(mouseMovement.x * 0.005), Ogre::Node::TS_WORLD);
+                    this->player->getPlayerCamera()->getParentNode()->pitch(Ogre::Radian(mouseMovement.y * 0.005));
+                    this->keyHandler->mouseMovementReset();
+                    this->trays->hideCursor();
+                }
+                else {
+                    this->trays->showCursor();
+                    Ogre::Vector2 mouseMovement = this->keyHandler->mouseMovementRel();
+                    OgreBites::MouseMotionEvent* cursorMovement = new OgreBites::MouseMotionEvent();
+                    cursorMovement->x = this->cursorPosition.x;
+                    cursorMovement->y = this->cursorPosition.y;
+                    cursorMovement->xrel = mouseMovement.x;
+                    cursorMovement->yrel = mouseMovement.y;
+                    cursorMovement->type = OgreBites::EventType::MOUSEMOTION;
+
+                    // Utilizando janela 1, pode causar problemas futuramente
+                    cursorMovement->windowID = 1;
+
+                    this->trays->mouseMoved(*cursorMovement);
+                    this->cursorPosition -= mouseMovement;
+                    this->keyHandler->mouseMovementReset();
+                    delete cursorMovement;
+                    
+                    
                 }
 
                 physics->getWorld()->stepSimulation(0.166);
@@ -370,6 +369,7 @@ namespace MyEngine {
         btRigidBody* playerBody = nullptr;
         KeyHandler* keyHandler;
         Player* player;
+        Ogre::Vector2 cursorPosition = Ogre::Vector2::ZERO;
         Ogre::Real tick = 0;
         Ogre::Real tickSpeed = 1.0 / 60.0;
         OgreBites::TrayManager* trays;
@@ -415,11 +415,11 @@ namespace MyEngine {
             btRigidBody* playerBody = this->addCollisionBodyInNode(0, playerEntity, Ogre::Bullet::CT_SPHERE, new playerCollision(playerEntity));
             physicController->getWorld()->setInternalTickCallback(localTick);
             this->playerInstance = new Player(playerCamera, playerNode, playerEntity, playerBody);
-//            this->inputController = new KeyHandler(application);
+
             this->application = application;
             this->trays = new OgreBites::TrayManager("Tray Controller", this->application->getRenderWindow());
 
-            this->inputController = new KeyHandler(application, scene, this->playerInstance, this->trays);    
+            this->inputController = new KeyHandler();
             this->trays->hideCursor();
             instaceTrays(); 
 
