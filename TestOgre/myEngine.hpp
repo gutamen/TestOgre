@@ -22,6 +22,7 @@
 #include <iterator>
 #include <limits>
 #include <memory>
+#include <OgreTerrainGroup.h>
 
 #ifndef ENGINE_DEFINITION
 #define ENGINE_DEFINITION
@@ -135,24 +136,25 @@ namespace MyEngine {
 
         bool keyReleased(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
-            case 103:
-                gIsPressed = false;
-                break;
+                case 100:
+                    dIsPressed = false;
+                    break;
 
-            case 115:
-                sIsPressed = false;
-                break;
+                case 103:
+                    gIsPressed = false;
+                    break;
 
-            case 119:
-                wIsPressed = false;
-                break;
+                case 115:
+                    sIsPressed = false;
+                    break;
+
+                case 119:
+                    wIsPressed = false;
+                    break;
             
-            // Alt solto
-            case 1073742050:
-                altIsPressed = false;
-                
-                break;
-
+                // Alt solto
+                case 1073742050:
+                    altIsPressed = false;
             }
             return true;
             
@@ -160,26 +162,26 @@ namespace MyEngine {
 
         bool keyPressed(const OgreBites::KeyboardEvent& evt) override {
             switch (evt.keysym.sym) {
-            case 100:
-                
-                break;
+                case 100:
+                    dIsPressed = true;
+                    break;
 
-            case 103:
-                gIsPressed = true;
-                break;
+                case 103:
+                    gIsPressed = true;
+                    break;
 
-            case 119:
-                wIsPressed = true;
-                break;
+                case 119:
+                    wIsPressed = true;
+                    break;
 
-            case 115:
-                sIsPressed = true;
-                break;
+                case 115:
+                    sIsPressed = true;
+                    break;
             
-            // Alt pressionado
-            case 1073742050:    
-                altIsPressed = true;
-                break;
+                // Alt pressionado
+                case 1073742050:    
+                    altIsPressed = true;
+
             }
 
             if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
@@ -203,6 +205,10 @@ namespace MyEngine {
             this->mouseMovement = Ogre::Vector2::ZERO;
         }
 
+        bool pressedD() {
+            return this->dIsPressed;
+        }
+
         bool pressedW() {
             return this->wIsPressed;
         }
@@ -222,6 +228,7 @@ namespace MyEngine {
     private:
         Ogre::Vector2 mouseMovement = Ogre::Vector2::ZERO;
         Ogre::Vector2 cursorPosition = Ogre::Vector2::ZERO;
+        bool dIsPressed = false;
         bool sIsPressed = false;
         bool wIsPressed = false;
         bool gIsPressed = false;
@@ -282,7 +289,8 @@ namespace MyEngine {
 
         }
 
-        Updater(KeyHandler* keyHandler, Player* player, Physics* physics, OgreBites::TrayManager* trays) {
+        Updater(KeyHandler* keyHandler, Player* player, Physics* physics, 
+            OgreBites::TrayManager* trays, Ogre::TerrainGroup* terrainGroup = nullptr) {
             this->player = player;
             this->keyHandler = keyHandler;
             this->physics = physics;
@@ -291,6 +299,7 @@ namespace MyEngine {
                 this->playerBody = player->getPlayerFisicBody();
             }
             this->playerDirectionTester = new playerRay();
+            this->terrainGroup = terrainGroup;
 
         }
 
@@ -351,6 +360,19 @@ namespace MyEngine {
                     this->cursorPosition -= mouseMovement;
                     this->keyHandler->mouseMovementReset();
                     delete cursorMovement;
+                    if (this->keyHandler->pressedD()) {
+                        // fire ray
+                        Ogre::Ray ray;
+                        // ray = mCamera->getCameraToViewportRay(0.5, 0.5);
+                        ray = this->trays->getCursorRay(this->player->getPlayerCamera());
+
+                        Ogre::TerrainGroup::RayResult rayResult = this->terrainGroup->rayIntersects(ray);
+
+                        if (rayResult.hit)
+                        {
+                            std::cout << rayResult.position << std::endl;
+                        }
+                    }
                     
                     
                 }
@@ -373,6 +395,7 @@ namespace MyEngine {
         Ogre::Real tick = 0;
         Ogre::Real tickSpeed = 1.0 / 60.0;
         OgreBites::TrayManager* trays;
+        Ogre::TerrainGroup* terrainGroup;
     };
 
     struct EntityCollisionListener
@@ -408,7 +431,10 @@ namespace MyEngine {
 
     public:
         // Construtor Principal
-        Controllers(OgreBites::ApplicationContext* application, Ogre::SceneManager* scene, Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, bool autoFill) {
+        Controllers(OgreBites::ApplicationContext* application, Ogre::SceneManager* scene, 
+            Ogre::Camera* playerCamera, Ogre::SceneNode* playerNode, Ogre::Entity* playerEntity, 
+            bool autoFill, Ogre::TerrainGroup* terrainGroup = nullptr) {
+
             scene->addRenderQueueListener(application->getOverlaySystem());
 
             this->physicController = new Physics();
@@ -423,7 +449,7 @@ namespace MyEngine {
             this->trays->hideCursor();
             instaceTrays(); 
 
-            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays);
+            this->frameController = new Updater(inputController, playerInstance, physicController, this->trays, terrainGroup);
 
         }
 

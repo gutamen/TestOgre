@@ -133,29 +133,18 @@ int main(int argc, char* argv[])
     //principalTerrainGroup->freeTemporaryResources();
     
     
-    // [camera]
-    Ogre::SceneManager::CameraList cameras = scnMgr->getCameras();
-    Ogre::Camera* camera = cameras.at("Camera");
+    //! [camera]    
+    Ogre::Camera* camera = scnMgr->createCamera("principalCamera");
+    camera->setProjectionType(Ogre::PT_PERSPECTIVE);
+    camera->setFOVy(Ogre::Radian(0.45));
+    camera->setNearClipDistance(1);
+    camera->setFarClipDistance(0);
     camera->setAutoAspectRatio(true);
-
-    // also need to tell where we are
-    //Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    //camNode->setPosition(7.358891, 4.958309, 6.925791);
-    //camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_PARENT);
-
-    // create the camera
-    //Ogre::Camera* cam = scnMgr->createCamera("myCam");
-    //cam->setNearClipDistance(5); // specific to this sample
-    //cam->setAutoAspectRatio(true);
-    //camNode->attachObject(cam);
-
-
-    // and tell it to render into the main window
-    //cout << scnMgr->getCameras().size() << endl;
-    //cout << scnMgr->getCameras().at("myCam")->getParentNode()->getOrientation() << endl;
-    //cout << camera->getParentNode()->getOrientation() << endl;
-
-    //camera->getParentNode()->setOrientation(0.912, -0.228, 0.338, 0);
+ 
+    Ogre::SceneNode* cameraNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    cameraNode->setPosition(7, 10, 7);
+    cameraNode->setOrientation(0.912, -0.228, 0.338, 0);
+    cameraNode->attachObject(camera);
     
     ctx.getRenderWindow()->addViewport(camera);
     //! [camera]
@@ -174,7 +163,7 @@ int main(int argc, char* argv[])
 //! [main]
     // register for input events
 
-    MyEngine::Controllers* controller = new MyEngine::Controllers(&ctx, scnMgr, camera, node, ent, true);
+    MyEngine::Controllers* controller = new MyEngine::Controllers(&ctx, scnMgr, camera, node, ent, true, principalTerrainGroup);
 //    MyEngine::Physics* fisic = controller->getPhysicsController();
 //    btRigidBody* playerBody = controller->getPlayerBody();
     controller->addCollisionObjectInNode(scnMgr->getEntity("Suzanne"), Ogre::Bullet::CT_SPHERE);
